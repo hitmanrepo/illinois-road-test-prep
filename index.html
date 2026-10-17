@@ -1,0 +1,1713 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Animated step-by-step practice for the Illinois road test: turns, lights, signs, school buses, railroad crossings, parking and more.">
+<title>Illinois Road Test Prep</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Barlow+Condensed:wght@500;600;700&display=swap">
+<style>
+/* Layout: lesson list on the left, scene + signal panel in the middle; signs, rule cards and checklist stack below */
+:root{
+  --bg:#eef1ef; --surface:#ffffff; --ink:#17201c; --muted:#56635d; --line:#d3dad6;
+  --accent:#0d6b46; --accent-ink:#ffffff;
+  --stop:#c4302b; --yield:#c98200; --go:#18884a; --info:#2462c4;
+  --grass:#c9d8c2; --grass2:#b4c8ab; --asphalt:#4b5056; --walk:#e2e0da; --mark:#f6f6f1; --yline:#f0be2c;
+  --me:#1d6fe8; --car1:#c0483c; --car2:#7c8792; --car3:#2c8c8c; --ped:#8a3fc0; --glass:#bfd5ea;
+  --lamp-off:#2b2f33; --housing:#16191c;
+  --font-display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
+  --font-body:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#111614; --surface:#1a211e; --ink:#e6ece9; --muted:#9aa7a1; --line:#2d3733;
+  --accent:#3fbf86; --accent-ink:#0b1310;
+  --stop:#e5534b; --yield:#e0a227; --go:#3cb46e; --info:#5b93ea;
+  --grass:#2a3929; --grass2:#22301f; --asphalt:#3b4046; --walk:#5c5b56; --mark:#e9e9e2; --yline:#e2b12a;
+  --me:#4b8ff2; --car1:#d4594c; --car2:#8f9aa5; --car3:#3aa3a3; --ped:#b77ae6; --glass:#9cb7d1;
+  --lamp-off:#2b2f33; --housing:#0b0d0e; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#111614; --surface:#1a211e; --ink:#e6ece9; --muted:#9aa7a1; --line:#2d3733;
+  --accent:#3fbf86; --accent-ink:#0b1310;
+  --stop:#e5534b; --yield:#e0a227; --go:#3cb46e; --info:#5b93ea;
+  --grass:#2a3929; --grass2:#22301f; --asphalt:#3b4046; --walk:#5c5b56; --mark:#e9e9e2; --yline:#e2b12a;
+  --me:#4b8ff2; --car1:#d4594c; --car2:#8f9aa5; --car3:#3aa3a3; --ped:#b77ae6; --glass:#9cb7d1;
+  --lamp-off:#2b2f33; --housing:#0b0d0e; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.5}
+.wrap{max-width:1240px;margin:0 auto;padding-block:20px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--font-display);line-height:1.1;text-wrap:balance;margin:0}
+h1{font-size:clamp(30px,5vw,46px);font-weight:700;letter-spacing:.2px}
+h2{font-size:30px;font-weight:700}
+h3{font-size:21px;font-weight:600}
+.eyebrow{font-family:var(--font-display);font-weight:600;font-size:15px;letter-spacing:1.4px;text-transform:uppercase;color:var(--accent)}
+header{display:grid;gap:8px;margin-bottom:18px}
+button{font:inherit;cursor:pointer}
+.btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:9px 14px;font-weight:700;font-size:15px}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn:focus-visible,.lesson:focus-visible,.dot:focus-visible{outline:3px solid var(--info);outline-offset:2px}
+.btn svg{width:16px;height:16px;fill:currentColor}
+
+/* app */
+.app{display:grid;grid-template-columns:250px minmax(0,1fr);gap:18px;align-items:start}
+.rail{display:grid;gap:14px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 10px)}
+.rail .grp{display:grid;gap:4px}
+.rail .gname{font-family:var(--font-display);font-weight:600;font-size:13px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);padding-left:4px}
+.lesson{display:flex;gap:8px;align-items:flex-start;text-align:left;width:100%;border:1px solid transparent;background:none;color:var(--ink);border-radius:8px;padding:7px 9px;font-size:15px;line-height:1.3}
+.lesson:hover{background:var(--surface)}
+.lesson.active{background:var(--surface);border-color:var(--accent);font-weight:700}
+.lesson .n{font-family:var(--font-display);font-weight:700;color:var(--muted);min-width:20px}
+.lesson .flag{display:block;font-size:12px;font-weight:700;color:var(--stop);text-transform:uppercase;letter-spacing:.6px}
+.lesson .done{margin-left:auto;color:var(--go);font-weight:700}
+.stagebox{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:grid;gap:14px;min-width:0}
+.stagehead{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;justify-content:space-between}
+.stagehead .sub{color:var(--muted);font-size:14px}
+.stage{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:16px;align-items:start}
+.scene{width:100%;max-width:640px;aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--grass);justify-self:center}
+.scene svg{display:block;width:100%;height:100%}
+.panel{display:grid;gap:12px}
+.pcard{border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:grid;gap:6px}
+.plabel{font-family:var(--font-display);font-weight:600;font-size:13px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted)}
+.tlrow{display:flex;gap:12px;align-items:center}
+.tl{background:var(--housing);border-radius:10px;padding:6px;display:grid;gap:5px;flex:none}
+.lamp{width:30px;height:30px;border-radius:50%;background:var(--lamp-off);display:grid;place-items:center}
+.lamp svg{width:20px;height:20px}
+.lamp.red.on{background:#ff3b30;box-shadow:0 0 12px #ff3b30}
+.lamp.yellow.on{background:#ffcc00;box-shadow:0 0 12px #ffcc00}
+.lamp.green.on{background:#2fd158;box-shadow:0 0 12px #2fd158}
+.lamp.arrow svg path{fill:#3a3f44}
+.lamp.arrow.ag svg path{fill:#2fd158}.lamp.arrow.ay svg path{fill:#ffcc00}.lamp.arrow.ar svg path{fill:#ff3b30}
+.flash{animation:flash 1s steps(1) infinite}
+@keyframes flash{50%{opacity:.15}}
+.tltext{font-size:14px;line-height:1.35}
+.nolight{font-size:14px;line-height:1.35}
+.sigrow{display:flex;gap:10px;align-items:center}
+.sigarrow{width:44px;height:30px;border-radius:6px;border:1px solid var(--line);display:grid;place-items:center}
+.sigarrow svg{width:26px;height:20px}
+.sigarrow svg path{fill:var(--line)}
+.sigarrow.on svg path{fill:#f2a20c}
+.sigarrow.on{animation:flash .9s steps(1) infinite;border-color:#f2a20c}
+.sigtext{font-size:14px;font-weight:700}
+.action{font-family:var(--font-display);font-weight:700;font-size:40px;letter-spacing:1px;text-align:center;border-radius:8px;padding:2px 6px;color:#fff;background:var(--muted)}
+.action.STOP{background:var(--stop)}.action.YIELD,.action.WAIT,.action.SLOW{background:var(--yield);color:#1d1400}
+.action.GO{background:var(--go)}.action.LOOK,.action.CREEP{background:var(--info)}
+.caption{display:grid;gap:4px;min-height:110px}
+.caption .stepn{font-family:var(--font-display);font-weight:600;font-size:15px;color:var(--muted);letter-spacing:.6px}
+.caption h3{font-size:25px}
+.caption p{margin:0;max-width:70ch}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.controls .spacer{flex:1}
+.speed{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--muted)}
+.speed select{font:inherit;padding:6px;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.dots{display:flex;flex-wrap:wrap;gap:6px}
+.dot{width:28px;height:28px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--muted);font-family:var(--font-display);font-weight:700;font-size:14px;padding:0}
+.dot.past{background:var(--line);color:var(--ink)}
+.dot.cur{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.box.tip{border-top:3px solid var(--yield);padding-top:8px;min-width:0}
+.box.tip p{margin:6px 0 0;font-weight:700;font-size:17px}
+.fold summary{font-family:var(--font-display);font-weight:700;font-size:19px;cursor:pointer;padding:4px 0;list-style:none;display:flex;gap:8px;align-items:center}
+.fold summary::-webkit-details-marker{display:none}
+.fold summary::before{content:"▸";color:var(--accent);font-size:16px;transition:transform .15s}
+.fold[open] summary::before{transform:rotate(90deg)}
+.fold ul{margin:6px 0 0;padding-left:20px;display:grid;gap:4px}
+.fold > .cheat,.fold > .checklist{margin-top:10px}
+.lsel{display:none;font:inherit;font-size:16px;padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);width:100%}
+.nextcta{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+
+/* sections */
+section.block{margin-top:40px;display:grid;gap:14px}
+section.block > p{margin:0;color:var(--muted);max-width:70ch}
+.signs{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,160px),1fr));gap:10px}
+.sign{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px;display:grid;gap:4px;justify-items:center;text-align:center;align-content:start;min-width:0}
+.sign svg{width:76px;height:76px}
+.sign b{font-size:15px;line-height:1.2}
+.sign span{font-size:13.5px;color:var(--muted);line-height:1.3}
+.cheat{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,270px),1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;display:grid;gap:8px;align-content:start;min-width:0}
+.card ul,.card ol{margin:0;padding-left:20px;display:grid;gap:5px}
+.lights{display:grid;gap:8px}
+.lightrow{display:grid;grid-template-columns:34px minmax(0,1fr);gap:10px;align-items:center;font-size:15px}
+.lightrow .lamp{width:28px;height:28px}
+.checklist{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,360px),1fr));gap:8px}
+.check{display:flex;gap:10px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 12px;cursor:pointer}
+.check input{width:20px;height:20px;margin-top:2px;accent-color:var(--accent);flex:none}
+.check span b{display:block}
+.check span{font-size:15px}
+footer{margin-top:40px;color:var(--muted);font-size:14px;display:grid;gap:6px}
+footer a{color:var(--info)}
+
+/* svg */
+.s-grass{fill:var(--grass)}.s-grass2{fill:var(--grass2)}.s-asph{fill:var(--asphalt)}.s-walk{fill:var(--walk)}.s-mark{fill:var(--mark)}.s-yl{fill:var(--yline)}
+.s-txt{font-family:var(--font-display);font-weight:700}
+.car-body{stroke:rgba(0,0,0,.45);stroke-width:1}
+.carlamp{fill:#5a4a20}
+.me.sig-left .cl-L,.me.sig-right .cl-R{fill:#ffb300;animation:flash .9s steps(1) infinite}
+.actor{transition:opacity .35s}
+.halo{fill:none;stroke:var(--me);stroke-width:3;opacity:.45}
+.mk-pulse{animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.35}}
+#fx-rail .rlamp{fill:#2b2f33}
+#fx-rail.on .rlamp{fill:#ff3b30;animation:flash .8s steps(1) infinite}
+#fx-rail .gate{transform:rotate(85deg);transform-origin:355px 300px;transition:transform 1.2s}
+#fx-rail.on .gate{transform:rotate(0deg)}
+.actor .blamp{fill:#5a2a20}.actor.fx .blamp{fill:#ff3b30;animation:flash .7s steps(1) infinite}
+.actor .barm{opacity:0;transition:opacity .4s}.actor.fx .barm{opacity:1}
+.actor .el-r,.actor .el-b{opacity:.3}.actor.fx .el-r{opacity:1;animation:flash .5s steps(1) infinite}.actor.fx .el-b{opacity:1;animation:flash .5s steps(1) .25s infinite}
+@media (prefers-reduced-motion: reduce){.mk-pulse,.flash,.sigarrow.on,.me .cl-L,.me .cl-R,.actor.fx .blamp,.actor.fx .el-r,.actor.fx .el-b,#fx-rail.on .rlamp{animation:none!important}}
+
+@media (max-width:980px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  .rail{display:none}
+  .lsel{display:block}
+  .stagehead h2,.stagehead .sub{display:none}
+}
+@media (max-width:760px){
+  body{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+  .wrap{padding-block:12px 20px}
+  header{gap:4px;margin-bottom:12px}
+  h1{font-size:26px}
+  .eyebrow{font-size:12px}
+  .stagebox{padding:10px;gap:10px;border-radius:10px}
+  .stage{grid-template-columns:minmax(0,1fr);gap:10px}
+  .scene{max-width:none;border-radius:8px;width:min(100%,max(260px,calc(100vh - 430px)));width:min(100%,max(260px,calc(100svh - 430px)))}
+  .panel{grid-template-columns:auto auto minmax(0,1fr);gap:8px}
+  .pcard{padding:6px 8px;gap:4px}
+  .plabel{font-size:11px;letter-spacing:.8px}
+  .tltext,.more{display:none}
+  .nolight{font-size:12px;max-width:72px}
+  .tlrow{gap:0}
+  .tl{padding:4px;gap:3px}
+  .lamp{width:20px;height:20px}.lamp svg{width:14px;height:14px}
+  .sigarrow{width:36px;height:26px}
+  .sigtext{font-size:12px}
+  .action{font-size:30px;padding:6px}
+  .caption{min-height:0;gap:2px}
+  .caption .stepn{font-size:13px}
+  .caption h3{font-size:21px}
+  .caption p{font-size:15.5px}
+  .controls{position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--surface);border-top:1px solid var(--line);display:grid;grid-template-columns:1fr 1.3fr 1fr;gap:8px;padding:10px max(16px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));transition:transform .2s}
+  .controls.away{transform:translateY(120%)}
+  .controls .btn{justify-content:center;min-height:50px;font-size:17px}
+  .controls #bReplay,.controls .speed,.controls .spacer{display:none}
+  .dot{width:24px;height:24px;font-size:12px}
+  .box.tip h3{font-size:17px}
+  .fold summary{font-size:17px}
+  section.block{margin-top:26px;gap:8px}
+  h2{font-size:24px}
+  .signs{grid-template-columns:repeat(auto-fill,minmax(min(100%,150px),1fr));gap:8px}
+  .sign svg{width:64px;height:64px}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Chicago · Illinois Secretary of State road test</div>
+    <h1>Everything on the road test, one step at a time</h1>
+  </header>
+
+  <div class="app">
+    <nav class="rail" id="rail" aria-label="Lessons"></nav>
+
+    <div class="stagebox">
+      <div class="stagehead">
+        <h2 id="ltitle">Lesson</h2>
+        <span class="sub" id="lsub"></span>
+        <select id="lsel" class="lsel" aria-label="Choose a lesson"></select>
+      </div>
+      <div class="stage">
+        <div class="scene"><svg id="svg" viewBox="0 0 600 600" role="img" aria-label="Top-down view of the road">
+          <g id="map"></g><g id="marks"></g><g id="actors"></g><g id="labels"></g>
+        </svg></div>
+        <div class="panel">
+          <div class="pcard">
+            <div class="plabel">Traffic light</div>
+            <div id="lightbox"></div>
+          </div>
+          <div class="pcard">
+            <div class="plabel">Your turn signal</div>
+            <div class="sigrow">
+              <div class="sigarrow" id="sigL"><svg viewBox="0 0 26 20"><path d="M0 10 L11 0 V6 H26 V14 H11 V20 Z"/></svg></div>
+              <div class="sigarrow" id="sigR"><svg viewBox="0 0 26 20"><path d="M26 10 L15 0 V6 H0 V14 H15 V20 Z"/></svg></div>
+            </div>
+            <div class="sigtext" id="sigtext">Off</div>
+          </div>
+          <div class="pcard act">
+            <div class="plabel">Do this now</div>
+            <div class="action" id="action">STOP</div>
+          </div>
+        </div>
+      </div>
+      <div class="caption" aria-live="polite">
+        <div class="stepn" id="stepn">Step 1 of 1</div>
+        <h3 id="stitle"></h3>
+        <p id="ssay"></p>
+      </div>
+      <div class="controls">
+        <button class="btn" id="bPrev" aria-label="Previous step"><svg viewBox="0 0 16 16"><path d="M11 2 L4 8 L11 14 Z"/></svg>Back</button>
+        <button class="btn primary" id="bPlay"><svg viewBox="0 0 16 16" id="playIcon"><path d="M4 2 L13 8 L4 14 Z"/></svg><span id="playTxt">Play</span></button>
+        <button class="btn" id="bNext" aria-label="Next step">Next<svg viewBox="0 0 16 16"><path d="M5 2 L12 8 L5 14 Z"/></svg></button>
+        <button class="btn" id="bReplay">Replay step</button>
+        <span class="spacer"></span>
+        <label class="speed" for="speed">Speed
+          <select id="speed"><option value="0.6">Slow</option><option value="1" selected>Normal</option><option value="1.6">Fast</option></select>
+        </label>
+      </div>
+      <div class="dots" id="dots"></div>
+      <div class="nextcta" id="nextcta" hidden>
+        <b>Lesson done.</b>
+        <button class="btn primary" id="bNextLesson">Next lesson</button>
+        <button class="btn" id="bAgain">Watch again</button>
+      </div>
+      <div class="box tip"><h3>Say it in your head</h3><p id="tip"></p></div>
+      <details class="fold"><summary>Rules for this lesson</summary><ul id="rules"></ul></details>
+    </div>
+  </div>
+
+  <section class="block">
+    <div class="eyebrow">The test itself</div>
+    <h2>What the Illinois examiner grades</h2>
+    <div class="cheat">
+      <div class="card">
+        <h3>Before you drive</h3>
+        <ul>
+          <li>Car check: brakes, headlights, taillights, brake lights, signals, plate light, horn, wipers, mirrors, seatbelts. No cracked windshield.</li>
+          <li>Seat, mirrors, seatbelt adjusted before moving. Examiner buckled too.</li>
+          <li>Show the controls when asked: horn, lights, signals, hazards, wipers, defroster, parking brake.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Required maneuvers</h3>
+        <ul>
+          <li><b>Straight backing</b> about 50 ft, slowly, looking over your right shoulder (not mirrors alone).</li>
+          <li><b>Turnabout</b> using an alley on your LEFT: left signal before entering, back out, stay on your side.</li>
+          <li><b>Uphill and downhill parking</b> at the curb, and <b>hill starts</b> (where the site has a hill).</li>
+          <li>Parallel parking is not a standard part of the Illinois test, but lesson 38 covers it in case your site asks.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>During the drive (10 to 20 min)</h3>
+        <ul>
+          <li>Complete stops at every stop sign and red light.</li>
+          <li>Obey every sign, light and lane marking. Speed at the limit, never over.</li>
+          <li>Right-of-way: pedestrians, oncoming traffic, cross traffic, driveways.</li>
+          <li>Turns: signal 100 ft before, correct lane in and out, no wide or cut corners.</li>
+          <li>Lane changes and merging: mirror, signal, shoulder.</li>
+          <li>Smooth braking, steering and acceleration. Both hands on the wheel. Scanning mirrors.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Automatic fail</h3>
+        <ul>
+          <li>Any traffic violation: rolling stop, speeding, red light, failing to yield (today's), wrong lane, no signal.</li>
+          <li>Any dangerous action, or the examiner has to grab the wheel or brake.</li>
+          <li>Hitting a curb hard, a car, a cone or a sign.</li>
+          <li>Passing a stopped school bus. Driving around a railroad gate.</li>
+          <li>Seatbelt off, or phone in use.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="eyebrow">Signs</div>
+    <h2>Signs you must know</h2>
+    <div class="signs" id="signs"></div>
+  </section>
+
+  <section class="block">
+    <div class="eyebrow">Rules</div>
+    <h2>Illinois rules the examiner watches for</h2>
+    <details class="fold"><summary>Show rule cards</summary><div class="cheat">
+      <div class="card">
+        <h3>What each light means</h3>
+        <div class="lights" id="lightref"></div>
+      </div>
+      <div class="card">
+        <h3>Where exactly to stop</h3>
+        <ol>
+          <li>At the <b>white stop line</b>.</li>
+          <li>No stop line? Stop <b>before the crosswalk</b>.</li>
+          <li>No crosswalk? Stop at the point <b>nearest the cross street where you can see</b> traffic, before entering it.</li>
+          <li>Leaving a driveway, alley or parking lot: stop <b>before the sidewalk</b>, then creep up and stop again if you can't see.</li>
+          <li>Railroad with lights or gate: <b>15 to 50 ft</b> from the nearest rail.</li>
+        </ol>
+        <p style="margin:0"><b>Full stop</b> means the car stops rolling completely. Count 1-2-3. A rolling stop fails the test.</p>
+      </div>
+      <div class="card">
+        <h3>Who goes first</h3>
+        <ul>
+          <li>Pedestrians in a crosswalk or on a sidewalk you cross: <b>always them</b>. Illinois says STOP, not just slow down.</li>
+          <li>Plain green, turning left: <b>oncoming traffic</b>.</li>
+          <li>All-way stop: <b>first to stop</b>. Tie: <b>car on the right</b>. Left turn yields to straight.</li>
+          <li>Leaving a driveway or lot: <b>everyone on the street</b>.</li>
+          <li>Roundabout: <b>cars already in the circle</b> (from your left).</li>
+          <li>Stop sign where cross traffic doesn't stop: <b>cross traffic</b>.</li>
+          <li>No signs at all: <b>car on the right</b>.</li>
+          <li>Emergency vehicle with lights and siren: <b>pull right and stop</b>. Clear an intersection or roundabout first.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Every turn, same order</h3>
+        <ol>
+          <li>Mirror check</li>
+          <li>Signal at least <b>100 ft</b> before (200 ft on faster roads outside town)</li>
+          <li>Blind-spot check (bikes on the right!)</li>
+          <li>Slow down before the turn, not during it</li>
+          <li>Stop where required. Yield.</li>
+          <li>Turn into the <b>nearest lane</b> going your way</li>
+          <li>Make sure the signal shuts off</li>
+        </ol>
+      </div>
+      <div class="card">
+        <h3>School bus</h3>
+        <ul>
+          <li><b>Yellow flashing:</b> bus is about to stop. Slow down.</li>
+          <li><b>Red flashing + stop arm:</b> STOP before reaching the bus. Stay stopped until lights stop and the arm folds.</li>
+          <li><b>Two-lane road:</b> traffic in BOTH directions stops.</li>
+          <li><b>Divided road or 4+ lanes:</b> only traffic going the same direction as the bus stops.</li>
+          <li>Never pass a stopped school bus. Big fine, license suspension, and an instant fail.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Railroad crossing</h3>
+        <ul>
+          <li>Slow down, look both ways, listen. Turn the radio down.</li>
+          <li>Lights flashing or gate down: stop <b>15 to 50 ft</b> from the nearest rail.</li>
+          <li><b>Never</b> drive around a gate. Never stop on the tracks.</li>
+          <li>Don't enter if traffic ahead could leave you stopped on the tracks.</li>
+          <li>Crossbuck only (no lights): slow, look, listen; stop if a train is coming.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Speed limits in Illinois</h3>
+        <ul>
+          <li><b>20 mph</b> school zone, school days 7 am to 4 pm, children present.</li>
+          <li><b>30 mph</b> in town unless posted. <b>15 mph</b> in alleys.</li>
+          <li><b>55 mph</b> other roads, <b>70 mph</b> interstates unless posted.</li>
+          <li>Going over the limit at all is a violation. Going much slower than traffic is a mark too.</li>
+          <li>Construction zones: posted limit, fines double, workers present or not.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Emergency vehicles and Scott's Law</h3>
+        <ul>
+          <li>Lights and siren behind you: signal right, pull to the right edge, <b>stop</b>. Not in an intersection.</li>
+          <li>Don't follow a fire truck within <b>500 ft</b>.</li>
+          <li><b>Scott's Law:</b> any vehicle stopped with flashing lights (police, tow, road crew): change lanes away if safe. If you can't, slow way down.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Road lines</h3>
+        <ul>
+          <li><b>Yellow</b> lines separate opposite directions. <b>White</b> lines separate same-direction lanes.</li>
+          <li><b>Solid yellow</b> on your side: no passing. <b>Broken yellow:</b> passing allowed when clear.</li>
+          <li><b>You MAY cross a solid yellow</b> to turn left into or out of an alley, driveway, private road or side street, or to get around an obstruction when clear.</li>
+          <li><b>U-turns:</b> only with no sign against it, 500 ft of view, no curve or hill. Chicago: generally not at or near intersections or downtown. On the test, use the turnabout.</li>
+          <li><b>Double solid white:</b> stay in your lane.</li>
+          <li><b>Center lane with arrows both ways:</b> left turns only, never for driving.</li>
+          <li>Wide white bar: stop line. Striped bars: crosswalk.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Parking distances</h3>
+        <ul>
+          <li><b>15 ft</b> from a fire hydrant</li>
+          <li><b>20 ft</b> from a crosswalk</li>
+          <li><b>30 ft</b> from a stop sign, yield sign or traffic light</li>
+          <li><b>50 ft</b> from a railroad crossing</li>
+          <li>Never in a crosswalk, on a sidewalk, in front of a driveway, or next to another parked car (double parking)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Parking on a hill</h3>
+        <ul>
+          <li><b>Downhill:</b> wheels turned <b>toward</b> the curb.</li>
+          <li><b>Uphill with a curb:</b> wheels turned <b>away</b> from the curb.</li>
+          <li><b>No curb (up or down):</b> wheels turned toward the <b>edge of the road</b> (right).</li>
+          <li>Parking brake on. Leaving: signal, mirror, shoulder check.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Hand signals</h3>
+        <ul>
+          <li><b>Left turn:</b> left arm straight out the window.</li>
+          <li><b>Right turn:</b> left arm out, bent <b>up</b> at the elbow.</li>
+          <li><b>Slow or stop:</b> left arm out, bent <b>down</b>.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Other habits the examiner checks</h3>
+        <ul>
+          <li>Seatbelt on before the car moves. Mirrors and seat adjusted first.</li>
+          <li>Both hands on the wheel. Smooth braking and steering.</li>
+          <li>Follow <b>3 seconds</b> behind the car ahead. More in rain.</li>
+          <li>Headlights on from sunset to sunrise and whenever wipers are on.</li>
+          <li>Pass a bicycle with at least <b>3 ft</b> of space.</li>
+          <li>Phone off and away. Hands-free only, and not on the test.</li>
+          <li>Scan: mirrors every 5 to 8 seconds, look far ahead, check intersections left-right-left.</li>
+        </ul>
+      </div>
+    </div></details>
+  </section>
+
+  <section class="block">
+    <div class="eyebrow">Tomorrow morning</div>
+    <h2>Test checklist</h2>
+    <details class="fold"><summary>Show checklist</summary><div class="checklist" id="checklist"></div></details>
+  </section>
+
+  <footer>
+    <div>Built as a study aid from the Illinois Vehicle Code and Rules of the Road. On the test, always follow posted signs and your examiner's instructions.</div>
+    <div>Sources:
+      <a href="https://ilga.gov/documents/legislation/ilcs/documents/062500050K11-1205.htm" target="_blank" rel="noopener">625 ILCS 5/11-1205 (leaving a driveway or alley)</a> ·
+      <a href="https://www.ilga.gov/documents/legislation/ilcs/documents/062500050K11-804.htm" target="_blank" rel="noopener">625 ILCS 5/11-804 (turn signals, 100 ft / 200 ft)</a> ·
+      <a href="https://ilga.gov/ftp/Public%20Acts/98/098-0798.htm" target="_blank" rel="noopener">625 ILCS 5/11-306 (red-light turns, flashing yellow arrow)</a> ·
+      <a href="https://www.ilsos.gov/publications/pdf_publications/dsd_a112.pdf" target="_blank" rel="noopener">Illinois Rules of the Road</a>
+    </div>
+  </footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+const NS="http://www.w3.org/2000/svg";
+const D2R=Math.PI/180;
+const dir=h=>[Math.sin(h*D2R),-Math.cos(h*D2R)];
+const headingOf=(dx,dy)=>Math.atan2(dx,-dy)/D2R;
+function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+function rect(p,x,y,w,h,cls,extra){return el("rect",Object.assign({x,y,width:w,height:h,class:cls},extra||{}),p);}
+function txt(p,x,y,s,size,fill,extra){const t=el("text",Object.assign({x,y,"font-size":size,fill:fill||"#111",class:"s-txt","text-anchor":"middle"},extra||{}),p);t.textContent=s;return t;}
+function bez(p0,c,p1,n){n=n||30;const pts=[];for(let i=0;i<=n;i++){const t=i/n,u=1-t;pts.push([u*u*p0[0]+2*u*t*c[0]+t*t*p1[0],u*u*p0[1]+2*u*t*c[1]+t*t*p1[1]]);}return pts;}
+function octPts(cx,cy,r){const a=[];for(let i=0;i<8;i++){const t=(22.5+i*45)*D2R;a.push((cx+r*Math.cos(t)).toFixed(1)+","+(cy+r*Math.sin(t)).toFixed(1));}return a.join(" ");}
+
+/* ---------- roundabout geometry ---------- */
+const ra=a=>[300+100*Math.cos(a*D2R),300+100*Math.sin(a*D2R)];
+function arc(a1,a2){const pts=[];const st=a2<a1?-4:4;for(let a=a1;st<0?a>a2:a<a2;a+=st)pts.push(ra(a));pts.push(ra(a2));return pts;}
+const ENTRY_S=bez([325,468],[325,397],ra(70));
+const EXIT_E=bez(ra(20),[397,325],[470,325]);
+const EXIT_N=bez(ra(-70),[325,203],[325,130]);
+const EXIT_W=bez(ra(-160),[203,275],[130,275]);
+
+/* ---------- common poses (x, y, heading: 0 = up/north, 90 = right/east) ---------- */
+const STOPLINE=[325,406,0], L_WAIT=[325,330,0];
+const R_END=[440,325,90], R_OFF=[660,325,90], L_END=[180,275,270], L_OFF=[-60,275,270];
+const NEAR=[{k:"zone",x:0,y:302,w:600,h:46,tone:"yield"}], FAR=[{k:"zone",x:0,y:252,w:600,h:46,tone:"yield"}];
+
+/* ---------- lessons ---------- */
+const LESSONS_SRC=[
+{
+ id:"lot-right", group:"Start here", title:"Right turn out of a parking lot", flag:"Your mistake today", map:"drive",
+ control:"No light. Stop before the sidewalk, then yield to everyone on the street.",
+ rules:["Full stop BEFORE the sidewalk when leaving any driveway, alley or parking lot.","Pedestrians on the sidewalk go first.","Creep to the curb and stop again if your view is blocked.","Traffic from your LEFT is in the lane you're turning into. It always goes first.","Turn into the nearest (right) lane. Don't swing wide."],
+ tip:"Stop at the sidewalk. Creep. LEFT, RIGHT, LEFT. Go only when the near lane is empty.",
+ steps:[
+  {t:"Heading for the exit, turning RIGHT",say:"Walking speed in the lot.",act:"SLOW",light:"none",signal:null,actors:{me:[325,570,0]}},
+  {t:"Turn on your RIGHT signal early",say:"Signal before you reach the exit.",act:"SLOW",signal:"right",actors:{me:[325,480,0]}},
+  {t:"STOP #1: full stop before the sidewalk",say:"Illinois law. Wheels still. Count 1-2-3.",act:"STOP",actors:{me:[325,404,0],p1:{from:[110,364],to:[225,364]}},
+   marks:[{k:"bar",x:286,y:379,w:78,h:5,tone:"stop"},{k:"label",x:372,y:398,text:"STOP #1\nbefore the sidewalk",tone:"stop",anchor:"start"}]},
+  {t:"Let the person on the sidewalk pass",say:"Sidewalk users always go first.",act:"WAIT",actors:{p1:[520,364]},marks:[{k:"label",x:372,y:398,text:"Pedestrian goes first",tone:"yield",anchor:"start"}]},
+  {t:"Creep to the curb. STOP #2 and look",say:"Ease forward until you can see. Don't stick out into the lane.",act:"CREEP",actors:{me:[325,372,0],p1:null},
+   marks:[{k:"bar",x:286,y:347,w:78,h:5,tone:"info"},{k:"label",x:372,y:398,text:"STOP #2\nat the curb, look",tone:"info",anchor:"start"}]},
+  {t:"LOOK LEFT: these cars come into YOUR lane",say:"Today's mistake. Cars from the LEFT are in the lane you want. They go first.",act:"YIELD",actors:{c1:{from:[-60,325,90],to:[150,325,90]}},
+   marks:[{k:"zone",x:0,y:302,w:600,h:46,tone:"yield"},{k:"label",x:150,y:212,text:"Car from the LEFT is heading\ninto the lane you want",tone:"yield",anchor:"middle"},{k:"label",x:300,y:440,text:"◀ LOOK LEFT",tone:"info",anchor:"end"}]},
+  {t:"Wait until it has completely passed",say:"If it has to brake for you, that's a fail.",act:"WAIT",actors:{c1:[660,325,90]},marks:[{k:"label",x:300,y:440,text:"Still waiting",tone:"yield",anchor:"end"}]},
+  {t:"Look RIGHT, then LEFT one more time",say:"Check the far lane, then one final look LEFT.",act:"LOOK",actors:{c1:null,c2:{from:[660,275,270],to:[-60,275,270]}},
+   marks:[{k:"label",x:350,y:440,text:"LOOK RIGHT ▶",tone:"info",anchor:"start"},{k:"label",x:300,y:440,text:"◀ then LEFT again",tone:"info",anchor:"end"}]},
+  {t:"Clear both ways: turn RIGHT into the nearest lane",say:"Turn tight. Don't swing wide.",act:"GO",actors:{me:R_END,c2:null},marks:[{k:"zone",x:330,y:302,w:270,h:46,tone:"go"}]},
+  {t:"Speed up smoothly, signal off",say:"Reach the limit. Check the signal is off.",act:"GO",signal:null,actors:{me:R_OFF}}
+ ]
+},
+{
+ id:"lot-left", group:"Start here", title:"Left turn out of a parking lot", map:"drive",
+ control:"No light. Stop before the sidewalk, then yield to traffic from BOTH directions.",
+ rules:["Same first stop: before the sidewalk.","A left turn crosses both lanes, so you need a gap in BOTH directions at once.","Never stop in the middle of the road waiting for the second lane.","Turn into the lane going your way (the far lane)."],
+ tip:"Stop at the sidewalk. Creep. LEFT, RIGHT, LEFT. Both lanes clear at once, then go.",
+ steps:[
+  {t:"Heading for the exit, turning LEFT",say:"A left turn crosses both lanes. Roll slowly.",act:"SLOW",light:"none",signal:null,actors:{me:[325,570,0]}},
+  {t:"Turn on your LEFT signal",say:"Signal before the exit.",act:"SLOW",signal:"left",actors:{me:[325,480,0]}},
+  {t:"STOP #1: before the sidewalk",say:"Full stop. Someone is walking toward you.",act:"STOP",actors:{me:[325,404,0],p1:{from:[540,364],to:[420,364]}},
+   marks:[{k:"bar",x:286,y:379,w:78,h:5,tone:"stop"},{k:"label",x:372,y:398,text:"STOP #1\nbefore the sidewalk",tone:"stop",anchor:"start"}]},
+  {t:"Let them walk past",say:"Wait until they're clear of your car.",act:"WAIT",actors:{p1:[110,364]}},
+  {t:"Creep to the curb. STOP #2",say:"Ease forward until you can see both ways.",act:"CREEP",actors:{me:[325,372,0],p1:null},
+   marks:[{k:"bar",x:286,y:347,w:78,h:5,tone:"info"},{k:"label",x:372,y:398,text:"STOP #2\nat the curb",tone:"info",anchor:"start"}]},
+  {t:"LOOK LEFT: near-lane traffic goes first",say:"Cars from the left pass right in front of you. Wait.",act:"YIELD",actors:{c1:{from:[-60,325,90],to:[660,325,90]}},marks:NEAR.concat([{k:"label",x:300,y:440,text:"◀ LOOK LEFT",tone:"info",anchor:"end"}])},
+  {t:"LOOK RIGHT: far-lane traffic goes first too",say:"Cars from the right are in the lane you'll enter. Wait.",act:"YIELD",actors:{c1:null,c2:{from:[660,275,270],to:[-60,275,270]}},marks:FAR.concat([{k:"label",x:350,y:440,text:"LOOK RIGHT ▶",tone:"info",anchor:"start"}])},
+  {t:"Both lanes clear at the same time? Last look LEFT",say:"Never pull out halfway and wait in the middle.",act:"LOOK",actors:{c2:null},marks:[{k:"label",x:300,y:440,text:"◀ LEFT clear",tone:"go",anchor:"end"},{k:"label",x:350,y:440,text:"RIGHT clear ▶",tone:"go",anchor:"start"}]},
+  {t:"Turn LEFT into the lane going your way",say:"Cross the near lane into the far lane. Don't cut the corner.",act:"GO",actors:{me:L_END},marks:[{k:"zone",x:0,y:252,w:270,h:46,tone:"go"}]},
+  {t:"Speed up, signal off",say:"Check the signal is off.",act:"GO",signal:null,actors:{me:L_OFF}}
+ ]
+},
+{
+ id:"green-right", group:"Traffic lights", title:"Right turn at a green light", map:"cross", mapOpts:{light:true},
+ rules:["Signal at least 100 ft before the turn (6 to 7 car lengths).","Check your right mirror and blind spot for bikes.","Green lets you turn, but pedestrians in the crosswalk go first.","Turn tight into the right lane at 10 to 15 mph."],
+ tip:"Signal 100 ft. Mirror, shoulder. Crosswalk empty? Turn tight.",
+ steps:[
+  {t:"Green light ahead, turning RIGHT",say:"Mirror check. Stay in the right lane.",act:"SLOW",light:"g",signal:null,actors:{me:[325,580,0]}},
+  {t:"Signal at least 100 feet before",say:"Check the right mirror and blind spot for bikes.",act:"SLOW",signal:"right",actors:{me:[325,490,0]},marks:[{k:"label",x:362,y:500,text:"Signal here: 100 ft\n≈ 6 to 7 car lengths",tone:"info",anchor:"start"}]},
+  {t:"Someone is in the crosswalk you'll turn across",say:"Green or not, the person goes first. Stop at the line.",act:"YIELD",actors:{me:STOPLINE,p1:{from:[365,236],to:[365,292]}},marks:[{k:"zone",x:354,y:250,w:22,h:100,tone:"yield"},{k:"label",x:388,y:420,text:"Pedestrian in your path\ngoes first",tone:"yield",anchor:"start"}]},
+  {t:"Wait until they're out of your path",say:"Wait until they reach the curb.",act:"WAIT",actors:{p1:[365,364]}},
+  {t:"Turn RIGHT into the right lane",say:"Tight, close to the curb, 10 to 15 mph.",act:"GO",actors:{me:R_END,p1:null}},
+  {t:"Straighten out, signal off",say:"Speed up. Signal off.",act:"GO",signal:null,actors:{me:R_OFF}}
+ ]
+},
+{
+ id:"red-right", group:"Traffic lights", title:"Right turn on red", map:"cross", mapOpts:{light:true},
+ rules:["Right on red is legal in Illinois after a FULL stop, unless a sign says NO TURN ON RED.","Stop behind the white line. No line: before the crosswalk.","Cross traffic from your LEFT has the green. It goes first.","People crossing in front of you have a WALK signal. They go first.","Many downtown Chicago corners have NO TURN ON RED signs."],
+ tip:"Full stop at the line. Sign? Crosswalk? LEFT clear? Then turn.",
+ steps:[
+  {t:"Red light, turning RIGHT",say:"Signal early and slow down.",act:"SLOW",light:"r",signal:"right",actors:{me:[325,580,0]}},
+  {t:"Full stop behind the white line",say:"No line? Before the crosswalk. Rolling = fail.",act:"STOP",actors:{me:STOPLINE},marks:[{k:"bar",x:298,y:378,w:54,h:6,tone:"stop"},{k:"label",x:362,y:420,text:"STOP behind\nthe white line",tone:"stop",anchor:"start"}]},
+  {t:"LOOK LEFT: cross traffic has the green",say:"Cars from the LEFT are heading into your lane. They go first.",act:"YIELD",actors:{c1:{from:[-60,325,90],to:[150,325,90]}},marks:NEAR.concat([{k:"label",x:150,y:212,text:"Car from the LEFT\nhas a GREEN",tone:"yield",anchor:"middle"}])},
+  {t:"Let it pass. Watch the crosswalk in front of you",say:"Someone is crossing with a WALK signal. Wait.",act:"WAIT",actors:{c1:[660,325,90],p1:{from:[238,365],to:[300,365]}},marks:[{k:"zone",x:250,y:354,w:100,h:22,tone:"yield"}]},
+  {t:"Pedestrian clear. One last look LEFT",say:"Nothing new from the left?",act:"LOOK",actors:{c1:null,p1:[372,365]},marks:[{k:"label",x:300,y:440,text:"◀ LOOK LEFT",tone:"info",anchor:"end"}]},
+  {t:"Clear: turn RIGHT",say:"Into the nearest lane.",act:"GO",actors:{me:R_END,p1:null}},
+  {t:"If you see this sign, wait for GREEN",say:"NO TURN ON RED means stay stopped. Common downtown.",act:"STOP",signal:null,actors:{me:R_OFF},marks:[{k:"sign",type:"ntor",x:395,y:430},{k:"label",x:420,y:470,text:"Sign = no right on red",tone:"stop",anchor:"middle"}]}
+ ]
+},
+{
+ id:"green-left", group:"Traffic lights", title:"Left turn at a green light (no arrow)", map:"cross", mapOpts:{light:true},
+ rules:["Use the lane next to the yellow center line.","On a plain green, oncoming traffic goes first.","You may pull forward into the intersection to wait. Keep your wheels STRAIGHT.","Yield to people in the crosswalk you turn across.","If the light changes while you're in the intersection, finish the turn once oncoming cars stop. Never back up."],
+ tip:"Pull in, wheels straight. Oncoming first. Crosswalk clear. Then turn.",
+ steps:[
+  {t:"Green light, turning LEFT",say:"Lane next to the yellow line.",act:"SLOW",light:"g",signal:null,actors:{me:[325,580,0]}},
+  {t:"Signal at least 100 feet before",say:"Mirror, signal, slow down.",act:"SLOW",signal:"left",actors:{me:[325,490,0]}},
+  {t:"Pull into the intersection and wait, wheels straight",say:"Wheels STRAIGHT, so a rear hit can't push you into oncoming cars.",act:"YIELD",actors:{me:L_WAIT,c1:{from:[275,-60,180],to:[275,110,180]}},marks:[{k:"label",x:362,y:338,text:"Wait here\nwheels STRAIGHT",tone:"info",anchor:"start"},{k:"zone",x:252,y:0,w:46,h:250,tone:"yield"}]},
+  {t:"Oncoming traffic goes first",say:"Straight or turning right, they go first.",act:"WAIT",actors:{c1:[275,660,180]}},
+  {t:"Check the crosswalk you'll turn across",say:"They have WALK. They go first.",act:"YIELD",actors:{c1:null,p1:{from:[235,236],to:[235,296]}},marks:[{k:"zone",x:224,y:250,w:22,h:100,tone:"yield"}]},
+  {t:"Wait until they're clear",say:"Wait until they reach the curb.",act:"WAIT",actors:{p1:[235,364]}},
+  {t:"Gap is clear: turn LEFT",say:"Into the nearest lane going your way. Don't cut the corner.",act:"GO",actors:{me:L_END,p1:null}},
+  {t:"Straighten out, signal off",say:"Speed up. Signal off.",act:"GO",signal:null,actors:{me:L_OFF}},
+  {t:"Light turns yellow while you wait?",say:"Already in the intersection? Finish once oncoming cars stop. Never back up.",act:"GO",light:"y",signal:"left",actors:{me:{at:L_WAIT},c1:{at:[275,194,180]}},marks:[{k:"label",x:362,y:338,text:"You're already in.\nFinish the turn.",tone:"go",anchor:"start"}]},
+  {t:"Oncoming stopped: complete the turn",say:"Clear the intersection.",act:"GO",light:"r",signal:null,actors:{me:[L_END,L_OFF]}}
+ ]
+},
+{
+ id:"arrows", group:"Traffic lights", title:"Green arrow and flashing yellow arrow", map:"cross", mapOpts:{light:true},
+ rules:["GREEN ARROW: protected turn. Oncoming traffic has a red.","Solid YELLOW ARROW: the protected turn is ending. Stop if you safely can.","FLASHING YELLOW ARROW: you may turn, but YIELD to oncoming traffic and pedestrians.","RED ARROW: no turning. Wait."],
+ tip:"Green arrow, go. Flashing yellow arrow, yield first.",
+ steps:[
+  {t:"GREEN ARROW: protected left turn",say:"Oncoming has red. The turn is yours.",act:"SLOW",light:"g+ga",signal:"left",actors:{me:[325,580,0],c1:{at:[275,194,180]}},marks:[{k:"label",x:262,y:150,text:"Oncoming has RED",tone:"stop",anchor:"end"}]},
+  {t:"Turn without stopping",say:"Still glance for red-light runners.",act:"GO",actors:{me:[[325,440,0],L_END]}},
+  {t:"Straighten out",say:"Signal off.",act:"GO",signal:null,actors:{me:L_OFF}},
+  {t:"Now a FLASHING YELLOW ARROW",say:"You MAY turn, but you must yield. Oncoming has GREEN.",act:"SLOW",light:"g+fya",signal:"left",actors:{me:{at:[325,580,0]},c1:null}},
+  {t:"Pull in and yield to oncoming traffic",say:"Like a plain green. Wheels straight, wait for the gap.",act:"YIELD",actors:{me:L_WAIT,c2:{from:[275,-60,180],to:[275,660,180]}},marks:[{k:"zone",x:252,y:0,w:46,h:250,tone:"yield"},{k:"label",x:362,y:338,text:"YIELD first",tone:"yield",anchor:"start"}]},
+  {t:"Gap: turn",say:"Gap and crosswalk clear. Turn.",act:"GO",signal:null,actors:{c2:null,me:[L_END,L_OFF]}}
+ ]
+},
+{
+ id:"oneway-left", group:"Traffic lights", title:"Left on red: one-way to one-way", map:"oneway", mapOpts:{light:true},
+ rules:["Illinois allows a LEFT turn on red only from a one-way street onto another one-way street.","Full stop first, then yield to cross traffic and pedestrians.","Start from the far-left lane. Turn into the nearest (left) lane.","Not allowed if a NO TURN ON RED sign is posted."],
+ tip:"Both one-way? Full stop, traffic from the right clear, then turn left.",
+ steps:[
+  {t:"Both streets are ONE-WAY",say:"Your street goes north. Cross street goes left. Far-left lane.",act:"SLOW",light:"r",signal:"left",actors:{me:[275,580,0]}},
+  {t:"Full stop behind the line",say:"Stop completely.",act:"STOP",actors:{me:[275,406,0]},marks:[{k:"bar",x:248,y:378,w:104,h:6,tone:"stop"}]},
+  {t:"All cross traffic comes from your RIGHT",say:"They have green. Let them pass.",act:"YIELD",actors:{c1:{from:[660,325,270],to:[-60,325,270]},c2:{from:[780,275,270],to:[-60,275,270]}},marks:[{k:"label",x:300,y:440,text:"LOOK RIGHT ▶",tone:"info",anchor:"start"}]},
+  {t:"People crossing in front of you go first",say:"They have WALK.",act:"WAIT",actors:{c1:null,c2:null,p1:{from:[362,365],to:[238,365]}},marks:[{k:"zone",x:250,y:354,w:100,h:22,tone:"yield"}]},
+  {t:"Clear: turn LEFT into the nearest lane",say:"Full stop + everything clear = legal left on red.",act:"GO",signal:null,actors:{p1:null,me:[[190,325,270],[-60,325,270]]}}
+ ]
+},
+{
+ id:"flash", group:"Traffic lights", title:"Flashing red, flashing yellow, dark light", map:"cross", mapOpts:{light:true},
+ control:"Dark or broken light: treat it as a 4-way STOP.",
+ rules:["FLASHING RED = STOP sign. Full stop, go when clear.","FLASHING YELLOW = slow down, look both ways, proceed with caution. No stop needed.","Light completely DARK (power out) = all-way stop. First to stop goes first.","A flashing red in one direction usually means a flashing yellow for the cross street. They won't stop."],
+ tip:"Flashing red: stop sign. Flashing yellow: slow and look. Dark: 4-way stop.",
+ steps:[
+  {t:"FLASHING RED = STOP sign",say:"Full stop at the line.",act:"STOP",light:"fr",signal:null,actors:{me:STOPLINE},marks:[{k:"bar",x:298,y:378,w:54,h:6,tone:"stop"}]},
+  {t:"Cross traffic has flashing yellow. It won't stop",say:"Wait for a gap.",act:"YIELD",actors:{c1:{from:[-60,325,90],to:[660,325,90]}},marks:NEAR},
+  {t:"Clear: go",say:"Look left-right-left, then go.",act:"GO",actors:{c1:null,me:[325,-60,0]}},
+  {t:"FLASHING YELLOW = slow, look, go",say:"No stop. Slow down, look both ways.",act:"SLOW",light:"fy",actors:{me:{at:[325,580,0]}}},
+  {t:"Proceed with caution",say:"Cross traffic has a flashing red and must stop for you.",act:"GO",actors:{c2:{at:[404,275,270]},me:[325,-60,0]}},
+  {t:"Light completely DARK",say:"Power out: everyone stops. 4-way stop rules.",act:"STOP",light:"none",actors:{c2:null,me:{at:[325,580,0]}}},
+  {t:"Full stop. First to stop goes first",say:"Car on your left stopped first. Let it go.",act:"WAIT",actors:{me:STOPLINE,c1:{from:[196,325,90],to:[660,325,90]}},marks:[{k:"bar",x:298,y:378,w:54,h:6,tone:"stop"}]},
+  {t:"Your turn",say:"Go.",act:"GO",actors:{c1:null,me:[325,-60,0]}}
+ ]
+},
+{
+ id:"allway", group:"Stop signs", title:"All-way (4-way) stop", map:"cross", mapOpts:{stops:["S","N","E","W"],allway:true},
+ control:"STOP sign with an ALL-WAY plate. Every direction must stop.",
+ rules:["Every car stops. First to stop goes first.","Stopped at the same time: the car on the RIGHT goes first.","Facing each other at the same time: left turn yields to straight.","A dark traffic light or flashing red works the same way."],
+ tip:"Full stop. Who stopped first? Tie: right goes. Left turn waits for straight.",
+ steps:[
+  {t:"All-way stop ahead",say:"Look for the ALL-WAY plate. The car on your left stopped first.",act:"SLOW",light:"none",signal:"left",actors:{me:[325,580,0],c1:{at:[196,325,90]}},marks:[{k:"label",x:150,y:400,text:"Stopped first",tone:"info",anchor:"middle"}]},
+  {t:"Full stop behind the line",say:"Stop completely. Count 1-2-3.",act:"STOP",actors:{me:STOPLINE},marks:[{k:"bar",x:298,y:378,w:54,h:6,tone:"stop"}]},
+  {t:"First to stop goes first",say:"It stopped first, so it goes.",act:"WAIT",actors:{c1:[660,325,90]}},
+  {t:"Your turn",say:"Turn left into the nearest lane.",act:"GO",actors:{c1:null,me:[L_END,L_OFF]}},
+  {t:"New case: you and the car on your RIGHT stopped together",say:"Same time: car on the RIGHT goes first.",act:"YIELD",signal:"left",actors:{me:{at:STOPLINE},c2:{at:[404,275,270]}},marks:[{k:"label",x:430,y:230,text:"Car on your RIGHT\ngoes first",tone:"yield",anchor:"middle"}]},
+  {t:"Let it go",say:"Wait until it has cleared.",act:"WAIT",actors:{c2:[-60,275,270]}},
+  {t:"Now you go",say:"Turn left.",act:"GO",actors:{c2:null,me:[L_END,L_OFF]}},
+  {t:"New case: you and the car across stopped together",say:"They go straight, you turn left. Left yields to straight.",act:"YIELD",signal:"left",actors:{me:{at:STOPLINE},c3:{at:[275,194,180]}},marks:[{k:"label",x:262,y:120,text:"Going straight:\ngoes first",tone:"yield",anchor:"end"}]},
+  {t:"Let it pass",say:"Wait until it's past you.",act:"WAIT",actors:{c3:[275,660,180]}},
+  {t:"Now turn",say:"Turn left into the nearest lane.",act:"GO",signal:null,actors:{c3:null,me:[L_END,L_OFF]}}
+ ]
+},
+{
+ id:"twoway", group:"Stop signs", title:"Stop sign where cross traffic doesn't stop", map:"cross", mapOpts:{stops:["S","N"],noStopPlate:true},
+ control:"STOP sign for you only. Cross traffic does NOT stop.",
+ rules:["Full stop at the line, then creep forward to see if needed.","Cross traffic doesn't stop. Wait for a safe gap.","Turning left: both directions must be clear at the same time.","Check the crosswalk before you creep into it."],
+ tip:"Stop. Creep. LEFT, RIGHT, LEFT. Only go with a real gap.",
+ steps:[
+  {t:"STOP sign for you, none for the cross street",say:"Cross traffic will NOT stop for you.",act:"SLOW",light:"none",signal:"left",actors:{me:[325,580,0]},marks:[{k:"label",x:395,y:470,text:"CROSS TRAFFIC\nDOES NOT STOP",tone:"stop",anchor:"start"}]},
+  {t:"Full stop at the line",say:"Stop completely behind the line.",act:"STOP",actors:{me:STOPLINE},marks:[{k:"bar",x:298,y:378,w:54,h:6,tone:"stop"}]},
+  {t:"Can't see? Creep forward, stop again",say:"Check the crosswalk, then creep until you can see.",act:"CREEP",actors:{me:[325,382,0]}},
+  {t:"LOOK LEFT",say:"Car from the left. It won't stop. Wait.",act:"YIELD",actors:{c1:{from:[-60,325,90],to:[660,325,90]}},marks:NEAR},
+  {t:"LOOK RIGHT",say:"Car from the right, in your lane. Wait.",act:"YIELD",actors:{c1:null,c2:{from:[660,275,270],to:[-60,275,270]}},marks:FAR},
+  {t:"Both clear: turn LEFT",say:"Last look left, then into the nearest lane.",act:"GO",signal:null,actors:{c2:null,me:[L_END,L_OFF]}}
+ ]
+},
+{
+ id:"uncontrolled", group:"Stop signs", title:"No signs, no lights", map:"cross", mapOpts:{},
+ control:"No signs or lights at this corner.",
+ rules:["Slow down and be ready to stop.","Two cars arriving together: the car on the RIGHT goes first.","Turning left: yield to oncoming traffic too."],
+ tip:"Slow down. Car on my right goes first.",
+ steps:[
+  {t:"No signs, no lights",say:"Slow down, ready to stop. Common on quiet side streets.",act:"SLOW",light:"none",signal:"left",actors:{me:[325,580,0],c1:{at:[620,275,270]}}},
+  {t:"A car arrives from your RIGHT at the same time",say:"Car on the RIGHT goes first.",act:"YIELD",actors:{me:[325,410,0],c1:[430,275,270]},marks:[{k:"label",x:450,y:225,text:"Car on your RIGHT\ngoes first",tone:"yield",anchor:"middle"}]},
+  {t:"Let it pass",say:"Wait until it's through.",act:"WAIT",actors:{c1:[-60,275,270]}},
+  {t:"Now turn",say:"Turn left into the nearest lane.",act:"GO",signal:null,actors:{c1:null,me:[L_END,L_OFF]}}
+ ]
+},
+{
+ id:"roundabout", group:"Roundabout", title:"Roundabout", map:"round",
+ control:"YIELD sign at every entrance. No light.",
+ rules:["Slow to 15 to 20 mph.","Pedestrians in the crosswalk go first.","Yield to cars already in the circle. They come from your LEFT.","Drive counter-clockwise (enter by turning right). Never stop inside, never change lanes inside.","Signal RIGHT just before your exit.","Emergency vehicle? Exit first, then pull over."],
+ tip:"Crosswalk. Yield to the left. Enter right. Signal right to leave.",
+ steps:[
+  {t:"Roundabout ahead",say:"Slow to 15-20 mph. Counter-clockwise. 1st exit right, 2nd straight, 3rd left.",act:"SLOW",light:"none",signal:null,actors:{me:[325,590,0]},marks:[{k:"label",x:500,y:285,text:"1st exit\nRIGHT",tone:"info",anchor:"middle"},{k:"label",x:420,y:70,text:"2nd exit\nSTRAIGHT",tone:"info",anchor:"middle"},{k:"label",x:90,y:225,text:"3rd exit\nLEFT",tone:"info",anchor:"middle"}]},
+  {t:"Stop for people in the crosswalk",say:"Pedestrians go first.",act:"STOP",actors:{me:[325,522,0],p1:{from:[238,489],to:[292,489]}},marks:[{k:"zone",x:250,y:478,w:100,h:22,tone:"yield"}]},
+  {t:"Let them finish crossing",say:"Wait until they're clear.",act:"WAIT",actors:{p1:[368,489]}},
+  {t:"Pull up to the YIELD line, look LEFT",say:"Cars in the circle go first. They come from your LEFT.",act:"YIELD",actors:{p1:null,me:[325,468,0],c1:{pts:arc(215,140),h:140}},marks:[{k:"bar",x:302,y:442,w:48,h:5,tone:"yield"},{k:"label",x:150,y:470,text:"Car in the circle\ngoes first",tone:"yield",anchor:"middle"}]},
+  {t:"Let it pass your entrance",say:"Wait until it has gone past you.",act:"WAIT",actors:{c1:[{pts:arc(140,20).concat(EXIT_E),h:90},[660,325,90]]}},
+  {t:"Gap: enter by turning RIGHT",say:"Enter slowly. Never stop inside.",act:"GO",actors:{c1:null,me:{pts:ENTRY_S.concat(arc(70,-20)),h:-20}}},
+  {t:"Going straight: signal RIGHT before your exit",say:"Signal after you pass the exit before yours.",act:"GO",signal:"right",actors:{me:{pts:arc(-20,-70),h:-70}}},
+  {t:"Exit and watch the exit crosswalk",say:"Right lane, check the crosswalk, signal off.",act:"GO",signal:null,actors:{me:[{pts:EXIT_N,h:0},[325,-60,0]]}},
+  {t:"New case: turning LEFT is the 3rd exit",say:"Same start: crosswalk, then yield left.",act:"LOOK",signal:null,actors:{me:{at:[325,468,0]}},marks:[{k:"label",x:90,y:225,text:"3rd exit\nLEFT",tone:"info",anchor:"middle"}]},
+  {t:"Go around past the 1st and 2nd exits",say:"Stay in the circle. No signal yet.",act:"GO",actors:{me:{pts:ENTRY_S.concat(arc(70,-115)),h:-115}}},
+  {t:"Signal RIGHT, then exit",say:"Signal right just before your exit.",act:"GO",signal:"right",actors:{me:[{pts:arc(-115,-160).concat(EXIT_W),h:270},[-60,275,270]]}}
+ ]
+},
+{
+ id:"school", group:"School and people", title:"School zone and crossing guard", map:"straight", mapOpts:{crosswalk:true,school:true},
+ control:"No light. School zone: 20 mph, and a crossing guard's STOP sign is law.",
+ rules:["School days, 7 am to 4 pm, children present: 20 mph. Not 21.","A crossing guard's hand-held STOP sign is a legal stop sign. Stop and wait.","Stop before the crosswalk, not in it.","Stay at 20 mph until the END SCHOOL ZONE sign.","No phone, no passing in a school zone."],
+ tip:"School sign: 20 mph. Guard's STOP: stop and wait.",
+ steps:[
+  {t:"School zone sign: slow to 20 mph",say:"School days, 7 am to 4 pm, kids present: 20 mph.",act:"SLOW",light:"none",signal:null,actors:{me:[[325,620,0],[325,470,0]]},marks:[{k:"label",x:392,y:560,text:"20 mph\nchildren present",tone:"yield",anchor:"start"}]},
+  {t:"Crossing guard steps out with a STOP paddle",say:"That STOP sign is law. Stop before the crosswalk.",act:"STOP",actors:{g1:{from:[388,300],to:[300,300]},me:[325,344,0]},marks:[{k:"bar",x:250,y:318,w:100,h:5,tone:"stop"}]},
+  {t:"Kids crossing: wait",say:"Don't move until the guard waves you on.",act:"WAIT",actors:{p1:{from:[388,296],to:[212,296]},p2:{from:[388,312],to:[212,312]}}},
+  {t:"Guard waves you on: go slowly",say:"Stay at 20 mph until the zone ends.",act:"GO",actors:{g1:[388,300],p1:null,p2:null,me:[325,-60,0]}}
+ ]
+},
+{
+ id:"ped", group:"School and people", title:"Pedestrian crosswalk (no light)", map:"straight", mapOpts:{crosswalk:true,pedSign:true},
+ control:"No light. Illinois law: STOP for a person in a crosswalk.",
+ rules:["Illinois law: you must STOP for people in a crosswalk, not just slow down.","Stop before the stop line or crosswalk.","Wait until they're across, or clearly past your path.","Never pass a car that's stopped at a crosswalk. Someone is crossing."],
+ tip:"Person in the crosswalk: STOP. Never pass a stopped car there.",
+ steps:[
+  {t:"Crosswalk ahead, person waiting at the curb",say:"Yellow sign: crosswalk ahead. Slow down.",act:"SLOW",light:"none",signal:null,actors:{me:[[325,620,0],[325,450,0]],p1:{at:[388,300]}}},
+  {t:"They step in: STOP before the crosswalk",say:"Stop at the line. Full stop.",act:"STOP",actors:{me:[325,344,0],p1:[212,300]},marks:[{k:"bar",x:250,y:318,w:100,h:5,tone:"stop"},{k:"zone",x:250,y:288,w:100,h:24,tone:"yield"}]},
+  {t:"Wait until they're across",say:"All the way to the other curb.",act:"WAIT",actors:{}},
+  {t:"Go",say:"Check the crosswalk once more, then go.",act:"GO",actors:{p1:null,me:[325,-60,0]}},
+  {t:"Another car is stopped at a crosswalk ahead",say:"Never pass it. Someone is crossing in front of it.",act:"STOP",actors:{me:{at:[325,620,0]},c1:{at:[325,344,0]},p1:{from:[212,300],to:[388,300]}},marks:[{k:"zone",x:250,y:288,w:100,h:24,tone:"yield"},{k:"label",x:395,y:400,text:"Stopped car =\nsomeone is crossing",tone:"stop",anchor:"start"}]},
+  {t:"Stop behind it and wait",say:"Don't go around.",act:"WAIT",actors:{me:[325,420,0]}},
+  {t:"It moves, you follow",say:"Look at the crosswalk yourself before you cross it.",act:"GO",actors:{p1:null,c1:[325,-100,0],me:[325,-60,0]}}
+ ]
+},
+{
+ id:"bus2", group:"School and people", title:"School bus on a two-lane road", map:"straight", mapOpts:{},
+ control:"No light. Red flashers and stop arm = STOP, both directions.",
+ rules:["Yellow flashing lights: the bus is about to stop. Slow down.","Red flashing lights and stop arm: STOP before reaching the bus.","Two-lane road: BOTH directions stop, including you on the other side.","Stay stopped until the lights stop and the arm folds in.","Passing a stopped school bus: license suspension and an instant fail."],
+ tip:"Red flashers and arm: STOP. Both directions. Wait for the arm to fold.",
+ steps:[
+  {t:"School bus ahead on the other side, yellow lights flashing",say:"Yellow = it's about to stop. Slow down.",act:"SLOW",light:"none",signal:null,actors:{b1:{from:[275,-100,180],to:[275,150,180]},me:[[325,620,0],[325,440,0]]}},
+  {t:"Red lights flash, stop arm out: STOP",say:"Two-lane road: BOTH directions stop. Stop well back.",act:"STOP",fx:{b1:true},actors:{me:[325,320,0]},marks:[{k:"bar",x:250,y:296,w:100,h:5,tone:"stop"},{k:"label",x:388,y:360,text:"STOP here\nboth directions",tone:"stop",anchor:"start"}]},
+  {t:"Kids cross in front of the bus: wait",say:"Don't move until the arm folds in and the red lights stop.",act:"WAIT",actors:{p1:{from:[212,205],to:[388,205]},p2:{from:[212,222],to:[300,222]}}},
+  {t:"Lights off, arm in: go slowly",say:"Pass slowly. Watch for late runners.",act:"GO",fx:{b1:false},actors:{p1:null,p2:null,me:[325,-60,0]}}
+ ]
+},
+{
+ id:"busdiv", group:"School and people", title:"School bus on a divided road", map:"straight", mapOpts:{divided:true},
+ control:"No light. Median between you and the bus: only same-direction traffic stops.",
+ rules:["Divided road (median) or 4+ lanes: only traffic going the SAME direction as the bus must stop.","Bus on the other side of the median: you may continue, slowly.","Bus ahead in YOUR direction: stop at least 20 ft behind. Never pass.","Not sure if the road counts as divided? Stop. Stopping is never the wrong answer."],
+ tip:"Median between us: continue slowly. Bus in my direction: stop 20 ft back.",
+ steps:[
+  {t:"Divided road: bus stopped on the OTHER side",say:"Median between you: only traffic going the bus's direction stops.",act:"SLOW",light:"none",signal:null,fx:{b1:true},actors:{b1:{at:[225,150,180]},c1:{at:[270,260,180]},me:[[375,620,0],[375,440,0]]},marks:[{k:"label",x:300,y:420,text:"Median",tone:"info",anchor:"middle"}]},
+  {t:"You may continue, slowly",say:"No stop needed. Slow down, watch for kids.",act:"GO",actors:{me:[375,-60,0]}},
+  {t:"Now a bus ahead in YOUR direction",say:"Red flashers, arm out. Stop at least 20 ft behind.",act:"STOP",fx:{b1:false,b2:true},actors:{b1:null,c1:null,b2:{at:[375,150,0]},me:{at:[375,620,0]}}},
+  {t:"Stop well back, wait",say:"Never pass it. Wait for the arm to fold.",act:"WAIT",actors:{me:[375,300,0]},marks:[{k:"bar",x:355,y:272,w:40,h:5,tone:"stop"}]},
+  {t:"Bus moves on: follow slowly",say:"Keep your distance. Watch for kids.",act:"GO",fx:{b2:false},actors:{b2:[375,-120,0],me:[375,-60,0]}}
+ ]
+},
+{
+ id:"rail", group:"Railroad", title:"Railroad crossing", map:"straight", mapOpts:{rail:true},
+ control:"No light. Red flashers or gate down = STOP 15 to 50 ft from the rail.",
+ rules:["Round yellow sign with an X: crossing ahead. Slow, look both ways, listen.","Lights flashing or gate down: stop 15 to 50 ft from the nearest rail.","NEVER drive around a lowered gate. NEVER stop on the tracks.","Don't enter unless there's room on the other side.","Crossbuck only (no lights or gate): slow, look, listen. Stop if a train is coming.","Don't shift gears on the tracks."],
+ tip:"Slow, look, listen. Gate or lights: stop 15 to 50 ft back. Never around a gate.",
+ steps:[
+  {t:"Yellow round sign: crossing ahead",say:"Slow down, look both ways, listen.",act:"SLOW",light:"none",signal:null,actors:{me:[[325,620,0],[325,450,0]]}},
+  {t:"Lights flash, gate drops: STOP",say:"15 to 50 ft from the nearest rail. Never on the tracks.",act:"STOP",fx:{rail:true},actors:{me:[325,352,0]},marks:[{k:"bar",x:250,y:330,w:100,h:5,tone:"stop"},{k:"label",x:388,y:380,text:"STOP 15 to 50 ft\nfrom the rail",tone:"stop",anchor:"start"}]},
+  {t:"Train passing: wait",say:"Never drive around a lowered gate. More trains may follow.",act:"WAIT",actors:{t1:{from:[-200,250,90],to:[800,250,90]}}},
+  {t:"Gate up, lights off: look both ways",say:"Room on the other side? Then cross.",act:"LOOK",fx:{rail:false},actors:{t1:null}},
+  {t:"Cross without stopping",say:"Don't stop or shift gears on the tracks.",act:"GO",actors:{me:[325,-60,0]}},
+  {t:"Crossing with no gates or lights (crossbuck only)",say:"Slow down, look both ways, listen. Stop if a train is coming.",act:"LOOK",actors:{me:[[325,620,0],[325,400,0]]}},
+  {t:"Clear: cross",say:"Steady speed across the tracks.",act:"GO",actors:{me:[325,-60,0]}}
+ ]
+},
+{
+ id:"emerg", group:"Emergency vehicles", title:"Ambulance or police behind you", map:"straight", mapOpts:{},
+ control:"No light. Lights and siren behind you: signal right, pull over, stop.",
+ rules:["Check your mirror. Don't panic, don't brake hard in the lane.","Signal RIGHT, pull to the right edge, and STOP.","Never stop in an intersection. Clear it first, then pull over.","Stay stopped until it has passed. More may follow.","Don't follow a fire truck within 500 ft."],
+ tip:"Siren: mirror, signal right, pull to the curb, stop. Wait. Then merge back.",
+ steps:[
+  {t:"Siren and lights behind you",say:"Mirror check. Stay calm, don't stop in the lane.",act:"LOOK",light:"none",signal:null,fx:{e1:true},actors:{me:{at:[325,330,0]},e1:{from:[325,760,0],to:[325,540,0]}}},
+  {t:"Signal RIGHT, pull to the curb, stop",say:"As far right as you can. Not in an intersection.",act:"STOP",signal:"right",actors:{me:[338,230,0]},marks:[{k:"label",x:395,y:300,text:"Pull right\nand STOP",tone:"stop",anchor:"start"}]},
+  {t:"Let it pass",say:"Stay stopped until it's by. More may follow.",act:"WAIT",signal:null,actors:{e1:[285,-100,0]}},
+  {t:"Mirror, signal LEFT, merge back",say:"Don't follow a fire truck within 500 ft.",act:"GO",signal:"left",actors:{e1:null,me:[325,-60,0]}}
+ ]
+},
+{
+ id:"lane", group:"Emergency vehicles", title:"Lane change and Scott's Law", map:"straight", mapOpts:{oneway2:true},
+ control:"No light. Both lanes go your way. Mirror, signal, shoulder, move.",
+ rules:["Lane change: mirror, signal, look over your shoulder, move smoothly, signal off.","Keep your speed while changing lanes. Don't drift slowly.","Scott's Law: a vehicle stopped with flashing lights (police, tow, road crew) means change lanes AWAY from it if you safely can.","Can't change lanes? Slow way down and leave as much room as possible."],
+ tip:"Mirror, signal, shoulder, move. Flashing lights on the shoulder: move over or slow down.",
+ steps:[
+  {t:"Examiner: move to the left lane",say:"Mirror first: rear-view, then left mirror.",act:"LOOK",light:"none",signal:null,actors:{me:[[338,620,0],[338,480,0]]}},
+  {t:"Signal LEFT",say:"Signal before you move.",act:"SLOW",signal:"left",actors:{me:[338,430,0]}},
+  {t:"Look over your LEFT shoulder",say:"Blind spot. A car is there. Wait.",act:"WAIT",actors:{c1:{from:[262,720,0],to:[262,-60,0]}},marks:[{k:"label",x:250,y:440,text:"◀ Shoulder check",tone:"info",anchor:"end"}]},
+  {t:"Clear: move over smoothly",say:"Keep your speed. Don't drift.",act:"GO",actors:{c1:null,me:[262,280,0]}},
+  {t:"Signal off",say:"Settle in the lane.",act:"GO",signal:null,actors:{me:[262,120,0]}},
+  {t:"Scott's Law: police stopped on the shoulder ahead",say:"Flashing lights on the shoulder: move over a lane if safe. If not, slow way down.",act:"SLOW",fx:{e2:true},actors:{me:{at:[338,620,0]},e2:{at:[372,170,0]},c1:{at:[262,430,0]}},marks:[{k:"label",x:300,y:120,text:"◀ Move over\nor slow down",tone:"yield",anchor:"end"}]},
+  {t:"Left lane blocked: slow down, give space",say:"Wait for the lane to clear.",act:"SLOW",actors:{me:[338,440,0],c1:[262,-60,0]}},
+  {t:"Lane clear: signal and move over",say:"Mirror, signal, shoulder, move.",act:"GO",signal:"left",actors:{c1:null,me:[262,250,0]}},
+  {t:"Pass with room, signal off",say:"Slow past the stopped vehicle.",act:"GO",signal:null,actors:{me:[262,-60,0]}}
+ ]
+},
+{
+ id:"turnabout", group:"Test maneuvers", title:"Turnabout: driveway on your RIGHT (some sites)", map:"drive",
+ control:"No light. Leaving the driveway uses the same rule as lesson 1.",
+ rules:["Signal right, pull just past the driveway, stop close to the curb.","Look over your RIGHT shoulder through the rear window while backing. Go slowly.","Stop before the sidewalk when coming back out.","Yield to traffic from both directions before turning left out."],
+ tip:"Past it, stop. Shoulder check. Back in slowly. Stop at the sidewalk. Yield both ways.",
+ steps:[
+  {t:"Examiner: turn around using the driveway on your right",say:"The driveway is ahead on the right.",act:"SLOW",light:"none",signal:null,actors:{me:[40,325,90]}},
+  {t:"Signal RIGHT, pull just past the driveway, stop",say:"Close to the curb, just past it.",act:"STOP",signal:"right",actors:{me:[450,325,90]}},
+  {t:"Look over your RIGHT shoulder",say:"Mirrors, then look back through the rear window. Check the sidewalk.",act:"LOOK",marks:[{k:"label",x:470,y:420,text:"Look back over\nyour RIGHT shoulder",tone:"info",anchor:"middle"}]},
+  {t:"Back slowly into the driveway",say:"Wheel right, walking speed. Keep looking back.",act:"SLOW",actors:{me:{to:[325,404,0],rev:true,c:[325,325]}}},
+  {t:"Stop. Now you're LEAVING a driveway",say:"Same as lesson 1. Stopped before the sidewalk. Signal LEFT.",act:"STOP",signal:"left",marks:[{k:"bar",x:286,y:379,w:78,h:5,tone:"stop"}]},
+  {t:"Creep to the curb, stop again",say:"Ease up until you can see both ways.",act:"CREEP",actors:{me:[325,372,0]}},
+  {t:"LOOK LEFT: near lane first",say:"Car from the left. Wait.",act:"YIELD",actors:{c1:{from:[-60,325,90],to:[660,325,90]}},marks:NEAR},
+  {t:"LOOK RIGHT: far lane too",say:"Car from the right, in your lane. Wait.",act:"YIELD",actors:{c1:null,c2:{from:[660,275,270],to:[-60,275,270]}},marks:FAR},
+  {t:"Both clear: turn LEFT",say:"Into your lane. Signal off.",act:"GO",signal:null,actors:{c2:null,me:[L_END,L_OFF]}}
+ ]
+},
+{
+ id:"back", group:"Test maneuvers", title:"Backing up in a straight line", map:"straight", mapOpts:{},
+ control:"No light. About 50 feet straight back, slowly.",
+ rules:["Foot on the brake, shift to Reverse.","Look over your RIGHT shoulder through the rear window. Keep looking back the whole time.","Walking speed. Small steering corrections.","Stop smoothly, shift to Drive, check mirrors before moving."],
+ tip:"Brake, R. Right shoulder. Slow and straight. Stop, D.",
+ steps:[
+  {t:"Examiner: back up about 50 feet, straight",say:"Foot on the brake. Shift to R.",act:"STOP",light:"none",signal:null,actors:{me:{at:[325,200,0]}}},
+  {t:"Look over your RIGHT shoulder, through the rear window",say:"Keep looking back the whole time, not just the mirrors.",act:"LOOK",marks:[{k:"label",x:395,y:260,text:"Look back over\nyour RIGHT shoulder",tone:"info",anchor:"start"}]},
+  {t:"Back slowly and straight",say:"Walking speed. Tiny steering corrections.",act:"SLOW",actors:{me:{to:[325,440,0],rev:true}}},
+  {t:"Stop. Shift to D",say:"Check mirrors before moving forward.",act:"STOP"}
+ ]
+}
+];
+
+const MORE=[
+{
+ id:"precheck", group:"Start here", title:"Start of the test: checks, then back out of the space", map:"drive", mapOpts:{},
+ control:"No light. Everything set before the car moves.",
+ rules:["Seat, mirrors, seatbelt before anything else. Both of you buckled.","The examiner may ask you to show: horn, headlights, turn signals, brake lights, hazards, wipers, defroster, parking brake.","Phone off and away.","Backing out: look over your shoulder, walking speed, stop for anyone walking.","End of the test: pull into a space straight, shift to P, parking brake on."],
+ tip:"Seat, mirrors, belt. Show the controls. Shoulder check, back out slowly.",
+ steps:[
+  {t:"Seat, mirrors, seatbelt",say:"Set everything before the car moves. Both of you buckled.",act:"STOP",light:"none",signal:null,actors:{me:{at:[246,540,180]}}},
+  {t:"Show the controls when asked",say:"Horn, headlights, signals, brake lights, hazards, wipers, defroster, parking brake.",act:"LOOK"},
+  {t:"Foot on brake, parking brake off, shift to R",say:"Look over your shoulder and both ways down the aisle.",act:"LOOK",actors:{p1:{from:[40,455],to:[200,455]}}},
+  {t:"Someone walking behind you: wait",say:"People in the lot go first.",act:"WAIT",actors:{p1:[560,455]}},
+  {t:"Back out slowly, turning",say:"Walking speed. Keep looking back until you're fully out.",act:"SLOW",actors:{p1:null,me:{to:[180,450,90],rev:true}}},
+  {t:"Stop, shift to D, head for the exit",say:"Now it's lesson 1: stop before the sidewalk.",act:"GO",actors:{me:[325,470,0]}},
+  {t:"End of the test: pull into a space",say:"Slow, signal, line up with the space.",act:"SLOW",signal:"right",actors:{me:{at:[60,450,90]}}},
+  {t:"Pull in straight between the lines",say:"Creep in. Center the car. Stop before the end of the space.",act:"SLOW",actors:{me:[174,540,180]}},
+  {t:"Shift to P, parking brake on, signal off",say:"Done. Wait for the examiner.",act:"STOP",signal:null}
+ ]
+},
+{
+ id:"drive-back", group:"Start here", title:"Backing out of a driveway onto a two-way street", map:"drive", mapOpts:{label:"DRIVEWAY",noCars:true},
+ control:"No light. Stop before the sidewalk, then everyone on the street goes first.",
+ rules:["Shift to R, look over your shoulder and at the sidewalk.","Stop before the sidewalk. Pedestrians go first.","Creep back until you can see both ways. Street traffic goes first.","Back into the NEAR lane only, ending with the car facing that lane's direction.","Never back across both lanes."],
+ tip:"R, shoulder. Stop at the sidewalk. Both ways clear. Back into the near lane only.",
+ steps:[
+  {t:"Nosed into the driveway, you'll back out",say:"Shift to R. Look over your shoulder and at the sidewalk.",act:"LOOK",light:"none",signal:null,actors:{me:{at:[325,480,180]}}},
+  {t:"Back slowly. STOP before the sidewalk",say:"Someone is walking. They go first.",act:"STOP",actors:{me:{to:[325,400,180],rev:true},p1:{from:[540,364],to:[380,364]}},marks:[{k:"bar",x:286,y:379,w:78,h:5,tone:"stop"}]},
+  {t:"Wait until they're past",say:"Don't creep while they're behind you.",act:"WAIT",actors:{p1:[110,364]}},
+  {t:"Creep back until you can see the street",say:"Traffic on the street goes first. Look both ways.",act:"CREEP",actors:{p1:null,me:{to:[325,362,180],rev:true},c1:{from:[-60,325,90],to:[660,325,90]}},marks:NEAR},
+  {t:"Clear both ways: back into the NEAR lane",say:"End up facing the way that lane goes. Never into the far lane.",act:"SLOW",actors:{c1:null,me:{to:[230,325,90],rev:true}},marks:[{k:"zone",x:0,y:252,w:600,h:46,tone:"stop"},{k:"label",x:300,y:212,text:"NOT the far lane",tone:"stop",anchor:"middle"}]},
+  {t:"Stop. Shift to D. Go",say:"Check mirrors, then drive.",act:"GO",actors:{me:[660,325,90]}}
+ ]
+},
+{
+ id:"lot-in-right", group:"Start here", title:"Turning right into a parking lot or driveway", map:"drive", mapOpts:{},
+ control:"No light. Sidewalk users go first.",
+ rules:["Signal 100 ft before. Mirror and blind spot: bikes on your right.","Slow down BEFORE the turn.","People on the sidewalk go first. Stop if needed.","Walking speed over the sidewalk."],
+ tip:"Signal, mirror, shoulder, slow. Sidewalk clear? Turn in slowly.",
+ steps:[
+  {t:"The entrance is ahead on your RIGHT",say:"Mirror check.",act:"SLOW",light:"none",signal:null,actors:{me:[[-60,325,90],[110,325,90]]}},
+  {t:"Signal RIGHT 100 ft before, check your blind spot",say:"Bikes ride on your right.",act:"SLOW",signal:"right",actors:{me:[210,325,90]}},
+  {t:"Someone on the sidewalk: STOP before the entrance",say:"Sidewalk users go first.",act:"STOP",actors:{me:[262,325,90],p1:{from:[540,364],to:[340,364]}},marks:[{k:"zone",x:285,y:352,w:80,h:24,tone:"yield"}]},
+  {t:"Wait until they're clear",say:"Hold still.",act:"WAIT",actors:{p1:[110,364]}},
+  {t:"Turn in at walking speed",say:"Tight turn, slow.",act:"GO",actors:{p1:null,me:[325,480,180]}},
+  {t:"Signal off, slow in the lot",say:"Walking speed.",act:"SLOW",signal:null,actors:{me:[325,540,180]}}
+ ]
+},
+{
+ id:"lot-in-left", group:"Start here", title:"Turning left into a parking lot across traffic", map:"drive", mapOpts:{},
+ control:"No light. Oncoming traffic and the sidewalk go first.",
+ rules:["Signal 100 ft before. Move close to the center line.","Oncoming traffic goes first. Wait with wheels STRAIGHT.","Check the sidewalk before you cross it.","Don't stop halfway across the lane."],
+ tip:"Signal left. Oncoming first, wheels straight. Sidewalk clear. Cross in one move.",
+ steps:[
+  {t:"The entrance is ahead on your LEFT",say:"Mirror check.",act:"SLOW",light:"none",signal:null,actors:{me:[[660,275,270],[520,275,270]]}},
+  {t:"Signal LEFT 100 ft before",say:"Slow down, stay close to the yellow line.",act:"SLOW",signal:"left",actors:{me:[430,275,270]}},
+  {t:"Oncoming traffic goes first: wait, wheels STRAIGHT",say:"Never cut in front. Waiting is fine.",act:"YIELD",actors:{me:[395,275,270],c1:{from:[-60,325,90],to:[660,325,90]}},marks:NEAR},
+  {t:"Check the sidewalk",say:"Someone walking? They go first.",act:"WAIT",actors:{c1:null,p1:{from:[110,364],to:[340,364]}},marks:[{k:"zone",x:285,y:352,w:80,h:24,tone:"yield"}]},
+  {t:"Clear: cross and turn in, one smooth move",say:"Don't stop halfway across.",act:"GO",actors:{p1:[540,364],me:[325,480,180]}},
+  {t:"Signal off, slow in the lot",say:"Walking speed.",act:"SLOW",signal:null,actors:{p1:null,me:[325,540,180]}}
+ ]
+},
+{
+ id:"yellow", group:"Traffic lights", title:"Light turns yellow as you approach", map:"cross", mapOpts:{light:true},
+ rules:["Yellow means red is coming. Stop if you can stop safely.","Far from the line: stop. Never speed up to beat it.","Too close to stop safely: continue through at the same speed.","Red before you reach the line: you must stop. Entering on red = fail."],
+ tip:"Yellow far away: stop. Yellow at the line: continue. Never speed up.",
+ steps:[
+  {t:"Green light, you're approaching",say:"Keep watching the light.",act:"GO",light:"g",signal:null,actors:{me:[[325,640,0],[325,560,0]]}},
+  {t:"YELLOW while you're still far back: STOP",say:"You can stop safely, so you must. Smooth brake.",act:"STOP",light:"y",actors:{me:STOPLINE},marks:[{k:"bar",x:298,y:378,w:54,h:6,tone:"stop"}]},
+  {t:"Red: wait",say:"Stay behind the line.",act:"WAIT",light:"r"},
+  {t:"Case 2: yellow when you're almost at the line",say:"Too close to stop safely.",act:"GO",light:"g",actors:{me:{at:[325,450,0]}}},
+  {t:"Continue through at the same speed",say:"Don't slam the brakes, don't speed up.",act:"GO",light:"y",actors:{me:[325,-60,0]}},
+  {t:"Case 3: red before you reach the line",say:"Stop. Entering on red is an automatic fail.",act:"STOP",light:"r",actors:{me:[{at:[325,640,0]},STOPLINE]},marks:[{k:"bar",x:298,y:378,w:54,h:6,tone:"stop"}]}
+ ]
+},
+{
+ id:"stop-queue", group:"Stop and yield signs", title:"Stop sign with a car ahead of you", map:"cross", mapOpts:{stops:["S","N"]},
+ control:"STOP sign for you. Cross traffic does NOT stop.",
+ rules:["Stop behind the car ahead. That's NOT your stop.","When it leaves, roll up to the line and STOP AGAIN.","Count 1-2-3 at the line. Then look left-right-left.","Following the car ahead through the sign is a fail."],
+ tip:"Stop behind it. It goes. Roll up. STOP AGAIN at the line.",
+ steps:[
+  {t:"A car is stopped at the stop sign ahead",say:"Stop behind it, one car length back.",act:"STOP",light:"none",signal:null,actors:{c1:{at:STOPLINE},me:[[325,640,0],[325,470,0]]}},
+  {t:"It goes. Roll up to the line",say:"Don't follow it through.",act:"SLOW",actors:{c1:[325,-60,0],me:STOPLINE}},
+  {t:"STOP AGAIN at the line. Count 1-2-3",say:"Most common fail: rolling through behind the car ahead.",act:"STOP",actors:{c1:null},marks:[{k:"bar",x:298,y:378,w:54,h:6,tone:"stop"},{k:"label",x:362,y:420,text:"Your stop\nis HERE",tone:"stop",anchor:"start"}]},
+  {t:"Cross traffic doesn't stop: look left-right-left",say:"Wait for a gap.",act:"YIELD",actors:{c2:{from:[-60,325,90],to:[660,325,90]}},marks:NEAR},
+  {t:"Clear: go",say:"Smooth start.",act:"GO",actors:{c2:null,me:[325,-60,0]}}
+ ]
+},
+{
+ id:"tee", group:"Stop and yield signs", title:"T-intersection: your street ends", map:"cross", mapOpts:{tee:true,stops:["S"]},
+ control:"STOP sign for you. The cross street doesn't stop.",
+ rules:["You must turn left or right.","Full stop at the line, then creep if you can't see.","Left turn: both directions clear at once.","Right turn: near lane clear, but still look both ways."],
+ tip:"Stop. LEFT, RIGHT, LEFT. Left needs both lanes. Right needs the near lane.",
+ steps:[
+  {t:"Your street ends ahead",say:"Signal LEFT early.",act:"SLOW",light:"none",signal:"left",actors:{me:[[325,620,0],[325,480,0]]}},
+  {t:"Full stop at the line",say:"Count 1-2-3.",act:"STOP",actors:{me:STOPLINE},marks:[{k:"bar",x:298,y:378,w:54,h:6,tone:"stop"}]},
+  {t:"LOOK LEFT: near lane",say:"Car from the left. Wait.",act:"YIELD",actors:{c1:{from:[-60,325,90],to:[660,325,90]}},marks:NEAR},
+  {t:"LOOK RIGHT: far lane",say:"Car from the right, in the lane you'll enter. Wait.",act:"YIELD",actors:{c1:null,c2:{from:[660,275,270],to:[-60,275,270]}},marks:FAR},
+  {t:"Both clear: turn LEFT into the far lane",say:"Don't cut the corner.",act:"GO",signal:null,actors:{c2:null,me:[L_END,L_OFF]}},
+  {t:"Turning RIGHT instead: same stop",say:"Signal RIGHT. Full stop.",act:"STOP",signal:"right",actors:{me:{at:STOPLINE}},marks:[{k:"bar",x:298,y:378,w:54,h:6,tone:"stop"}]},
+  {t:"Near lane: car from the LEFT goes first",say:"Still glance right for anyone turning in.",act:"YIELD",actors:{c1:{from:[-60,325,90],to:[660,325,90]}},marks:NEAR},
+  {t:"Clear: turn RIGHT into the near lane",say:"Tight turn. Signal off.",act:"GO",signal:null,actors:{c1:null,me:[R_END,R_OFF]}}
+ ]
+},
+{
+ id:"yieldsign", group:"Stop and yield signs", title:"Yield sign", map:"cross", mapOpts:{yields:["S"]},
+ control:"YIELD sign for you. Cross traffic goes first.",
+ rules:["Slow down and be ready to stop.","Clear? Go without a full stop.","Not clear? Stop and wait.","Yield to pedestrians too."],
+ tip:"Slow. Clear: roll through. Not clear: stop.",
+ steps:[
+  {t:"YIELD sign ahead: slow down",say:"Be ready to stop.",act:"SLOW",light:"none",signal:null,actors:{me:[[325,620,0],[325,470,0]]}},
+  {t:"A car is coming from the left: stop and let it pass",say:"Yield means they go first.",act:"YIELD",actors:{me:[325,406,0],c1:{from:[-60,325,90],to:[660,325,90]}},marks:NEAR},
+  {t:"Clear: go",say:"No need to count to 3 at a yield sign. Just make sure it's clear.",act:"GO",actors:{c1:null,me:[325,-60,0]}},
+  {t:"Second time: nothing coming",say:"Slow, look both ways.",act:"SLOW",actors:{me:[{at:[325,620,0]},[325,430,0]]}},
+  {t:"Clear: continue without stopping",say:"Don't stop for no reason. Traffic behind expects you to go.",act:"GO",actors:{me:[325,-60,0]}}
+ ]
+},
+{
+ id:"lane4", group:"Lanes and speed", title:"Lane change on a 4-lane street", map:"straight", mapOpts:{four:true},
+ control:"No light. Two lanes each way. Never cross the yellow line to change lanes.",
+ rules:["Mirror, signal, shoulder check, move smoothly, signal off.","One lane at a time.","Keep your speed while moving over.","Never cross the yellow line. The lanes on the other side are oncoming."],
+ tip:"Mirror, signal, shoulder, move. One lane at a time.",
+ steps:[
+  {t:"Examiner: move to the left lane",say:"Rear-view mirror, then left mirror.",act:"LOOK",light:"none",signal:null,actors:{me:[[375,640,0],[375,500,0]],c3:{from:[275,-60,180],to:[275,660,180]}}},
+  {t:"Signal LEFT",say:"Signal, then a moment before you move.",act:"SLOW",signal:"left",actors:{me:[375,440,0]}},
+  {t:"Look over your LEFT shoulder",say:"A car is in your blind spot. Wait.",act:"WAIT",actors:{c3:null,c1:{from:[325,740,0],to:[325,-60,0]}},marks:[{k:"label",x:300,y:470,text:"◀ Shoulder check",tone:"info",anchor:"end"}]},
+  {t:"Clear: move over smoothly",say:"Keep your speed.",act:"GO",actors:{c1:null,me:[325,300,0]}},
+  {t:"Signal off",say:"Yellow line on your left: never cross it.",act:"GO",signal:null,actors:{me:[325,180,0]},marks:[{k:"zone",x:200,y:0,w:98,h:600,tone:"stop"},{k:"label",x:250,y:420,text:"Oncoming lanes\nnever cross",tone:"stop",anchor:"middle"}]},
+  {t:"Back to the right lane: mirror, signal RIGHT, RIGHT shoulder",say:"Bikes and cars hide on your right.",act:"LOOK",signal:"right",actors:{me:{at:[325,520,0]}}},
+  {t:"Clear: move over",say:"Smooth, same speed.",act:"GO",actors:{me:[375,260,0]}},
+  {t:"Signal off",say:"One lane at a time, every time.",act:"GO",signal:null,actors:{me:[375,-60,0]}}
+ ]
+},
+{
+ id:"speed", group:"Lanes and speed", title:"Speed limits and following distance", map:"straight", mapOpts:{speedSigns:[[540,35],[320,25]]},
+ control:"No light. Watch the signs and the speedometer.",
+ rules:["Hold the limit, not 1 over. Check the speedometer every few seconds.","A new limit starts AT the sign. Slow down before you reach it.","Follow 3 seconds behind. More in rain.","Brake early and smoothly. The examiner feels every jerk.","Too slow is also a mark. Drive at the limit when it's safe."],
+ tip:"Limit, not over. Slow before the sign. 3 seconds back. Brake early.",
+ steps:[
+  {t:"Speed limit 35",say:"Hold 35. Check the speedometer often.",act:"GO",light:"none",signal:null,actors:{me:[[325,660,0],[325,560,0]]}},
+  {t:"25 sign ahead: slow down BEFORE it",say:"Be at 25 when you pass the sign.",act:"SLOW",actors:{me:[325,345,0]},marks:[{k:"label",x:300,y:400,text:"Be at 25 here",tone:"yield",anchor:"middle"}]},
+  {t:"Car ahead: keep a 3-second gap",say:"When it passes a mark, count 3 seconds before you reach it.",act:"SLOW",actors:{c1:{from:[325,160,0],to:[325,100,0]},me:[325,250,0]},marks:[{k:"zone",x:302,y:120,w:46,h:110,tone:"yield"},{k:"label",x:380,y:180,text:"3 seconds",tone:"yield",anchor:"start"}]},
+  {t:"It brakes: brake early and smoothly",say:"Stop where you can still see its rear tires.",act:"STOP",actors:{c1:[325,80,0],me:[325,160,0]}}
+ ]
+},
+{
+ id:"bike", group:"Lanes and speed", title:"Bicycle ahead and bikes on your right", map:"straight", mapOpts:{},
+ control:"No light. Illinois: pass a bike with at least 3 feet.",
+ rules:["Slow down and stay behind. Don't honk, don't tailgate.","Pass only when the oncoming lane is clear, with at least 3 ft of space.","Return to your lane only when you can see the bike in your mirror.","Before any right turn, check the bike lane and your blind spot. The bike goes first."],
+ tip:"Stay back. 3 feet to pass. Right turn: check for bikes first.",
+ steps:[
+  {t:"Bicycle ahead in your lane",say:"Slow down. Stay behind. No honking.",act:"SLOW",light:"none",signal:null,actors:{k1:{from:[340,340,0],to:[340,260,0]},me:[[325,640,0],[325,400,0]]}},
+  {t:"Oncoming car: you can't pass yet",say:"Stay back and wait.",act:"WAIT",actors:{c1:{from:[275,-60,180],to:[275,660,180]},k1:[340,230,0]}},
+  {t:"Clear: signal, pass with at least 3 feet",say:"Move over. Don't squeeze by.",act:"GO",signal:"left",actors:{c1:null,me:[290,180,0],k1:[340,200,0]},marks:[{k:"zone",x:318,y:100,w:44,h:200,tone:"yield"},{k:"label",x:380,y:200,text:"3 ft minimum",tone:"yield",anchor:"start"}]},
+  {t:"Back in your lane once you see the bike in your mirror",say:"Signal right, ease back.",act:"GO",signal:"right",actors:{me:[325,-60,0],k1:[340,170,0]}},
+  {t:"Signal off",say:"Check it's off.",act:"GO",signal:null}
+ ]
+},
+{
+ id:"curb", group:"Lanes and speed", title:"Pull over to the curb, then pull out", map:"straight", mapOpts:{},
+ control:"No light. Signal, curb within 12 inches, P, parking brake. Signal and shoulder check to leave.",
+ rules:["Mirror, signal RIGHT, slow down, pull in parallel to the curb.","Within 12 inches of the curb, not touching it.","Shift to P, parking brake on, signal off.","Leaving: signal LEFT, mirror, look over your LEFT shoulder, wait for a gap."],
+ tip:"Signal right, curb, P, brake. Signal left, shoulder, gap, go.",
+ steps:[
+  {t:"Examiner: pull over and stop at the curb",say:"Mirror check, signal RIGHT.",act:"LOOK",light:"none",signal:"right",actors:{me:[[325,640,0],[325,520,0]]}},
+  {t:"Slow down, pull in parallel, within 12 inches",say:"Not touching the curb.",act:"SLOW",actors:{me:[339,330,0]},marks:[{k:"zone",x:340,y:250,w:12,h:160,tone:"info"},{k:"label",x:380,y:300,text:"within 12 in\nof the curb",tone:"info",anchor:"start"}]},
+  {t:"Stop. Shift to P. Parking brake. Signal off",say:"Wait for the examiner.",act:"STOP",signal:null},
+  {t:"Pull out: signal LEFT, mirror, LEFT shoulder",say:"Traffic in the lane goes first.",act:"WAIT",signal:"left",actors:{c1:{from:[325,720,0],to:[325,-60,0]}}},
+  {t:"Gap: pull out smoothly",say:"Build speed to the limit.",act:"GO",actors:{c1:null,me:[325,-60,0]}},
+  {t:"Signal off",say:"Check it's off.",act:"GO",signal:null}
+ ]
+},
+{
+ id:"hill", group:"Test maneuvers", title:"Parking on a hill and hill starts", map:"straight", mapOpts:{},
+ control:"No light. On this map the top of the hill is UP.",
+ rules:["Uphill WITH a curb: wheels turned AWAY from the curb (left).","Downhill: wheels turned TOWARD the curb (right).","No curb, up or down: wheels toward the road edge (right).","Parking brake on, shift to P.","Hill start: brake, D, signal, mirror, shoulder. Gas as you release the brake. No rolling back."],
+ tip:"Up: away. Down: toward. No curb: toward the edge. Brake on. Gas before releasing.",
+ steps:[
+  {t:"Examiner: park facing UPHILL at the curb",say:"Signal RIGHT, pull in within 12 inches, stop.",act:"STOP",light:"none",signal:"right",actors:{me:[[325,640,0],[339,330,0]]},marks:[{k:"label",x:300,y:40,text:"▲ UPHILL (top of the hill)",tone:"info",anchor:"middle"}]},
+  {t:"Uphill with a curb: wheels AWAY from the curb",say:"If the brakes fail, the tire rolls back into the curb and stops.",act:"STOP",signal:null,marks:[{k:"label",x:300,y:40,text:"▲ UPHILL (top of the hill)",tone:"info",anchor:"middle"},{k:"wheels",x:339,y:317,a:-35},{k:"label",x:380,y:300,text:"Wheels turned\nAWAY (left)",tone:"info",anchor:"start"}]},
+  {t:"Parking brake on. Shift to P",say:"Set the brake before your foot leaves the pedal.",act:"STOP",marks:[{k:"label",x:300,y:40,text:"▲ UPHILL (top of the hill)",tone:"info",anchor:"middle"},{k:"wheels",x:339,y:317,a:-35}]},
+  {t:"Uphill start: brake, D, signal LEFT, mirror, shoulder",say:"A car is coming. Wait.",act:"WAIT",signal:"left",actors:{c1:{from:[325,720,0],to:[325,-60,0]}},marks:[{k:"label",x:300,y:40,text:"▲ UPHILL (top of the hill)",tone:"info",anchor:"middle"},{k:"wheels",x:339,y:317,a:-35}]},
+  {t:"Gas as you release the parking brake. No rolling back",say:"Straighten the wheels as you pull out.",act:"GO",actors:{c1:null,me:[325,100,0]}},
+  {t:"Now park facing DOWNHILL",say:"Same approach: signal right, curb, stop.",act:"STOP",signal:"right",actors:{me:[{at:[325,640,0]},[339,330,0]]},marks:[{k:"label",x:300,y:40,text:"▼ DOWNHILL (bottom of the hill)",tone:"info",anchor:"middle"}]},
+  {t:"Downhill: wheels TOWARD the curb",say:"Brakes fail: the tire rolls forward into the curb.",act:"STOP",signal:null,marks:[{k:"label",x:300,y:40,text:"▼ DOWNHILL (bottom of the hill)",tone:"info",anchor:"middle"},{k:"wheels",x:339,y:317,a:35},{k:"label",x:380,y:300,text:"Wheels turned\nTOWARD (right)",tone:"info",anchor:"start"}]},
+  {t:"No curb? Wheels toward the road edge, uphill or downhill",say:"Right, every time.",act:"STOP",marks:[{k:"wheels",x:339,y:317,a:35},{k:"label",x:380,y:300,text:"No curb:\ntoward the edge",tone:"info",anchor:"start"}]},
+  {t:"Downhill start: brake, D, signal, mirror, shoulder, go",say:"Easy on the gas. It rolls on its own.",act:"GO",signal:"left",actors:{me:[325,-60,0]}},
+  {t:"Signal off",say:"Done.",act:"GO",signal:null}
+ ]
+},
+{
+ id:"talley", group:"Test maneuvers", title:"Turnabout using an alley on your LEFT (official)", map:"drive", mapOpts:{alley:true},
+ control:"No light. Official Illinois maneuver: signal LEFT, pull into the alley, back out, stay on your side.",
+ rules:["Signal LEFT before entering the alley.","Oncoming traffic and the sidewalk go first.","Pull in far enough to clear the sidewalk. Stop.","Shift to R, look over your RIGHT shoulder, stop before the sidewalk, look both ways.","Back out into YOUR side of the street only. Never into the far lane.","Shift to D, signal off, drive on."],
+ tip:"Signal left. Yield. In. R, shoulder. Stop at sidewalk. Back into MY side only.",
+ steps:[
+  {t:"Examiner: turn around using the alley on your LEFT",say:"Alley ahead on the left.",act:"SLOW",light:"none",signal:null,actors:{me:[[-60,325,90],[110,325,90]]}},
+  {t:"Signal LEFT, slow down",say:"Mirror check first.",act:"SLOW",signal:"left",actors:{me:[200,325,90]}},
+  {t:"Oncoming traffic goes first",say:"Wait with the wheels straight.",act:"YIELD",actors:{me:[240,325,90],c1:{from:[660,275,270],to:[-60,275,270]}},marks:FAR},
+  {t:"Check the sidewalk, then pull into the alley",say:"Far enough that your rear clears the sidewalk. Stop.",act:"GO",actors:{c1:null,me:[325,170,0]}},
+  {t:"Shift to R. Look over your RIGHT shoulder, both ways",say:"Someone on the sidewalk goes first.",act:"LOOK",signal:null,actors:{p1:{from:[540,236],to:[380,236]}}},
+  {t:"Back slowly, STOP before the sidewalk",say:"Wait for the walker.",act:"STOP",actors:{me:{to:[325,200,0],rev:true},p1:[110,236]},marks:[{k:"bar",x:286,y:222,w:78,h:5,tone:"stop"}]},
+  {t:"Look both ways. Street traffic goes first",say:"Both directions.",act:"WAIT",actors:{p1:null,c2:{from:[-60,325,90],to:[660,325,90]}},marks:NEAR},
+  {t:"Clear: back out into YOUR side only",say:"Swing the rear right so you end up facing the other way, in the near lane.",act:"SLOW",actors:{c2:null,me:{to:[400,275,270],rev:true}},marks:[{k:"zone",x:0,y:302,w:600,h:46,tone:"stop"},{k:"label",x:300,y:440,text:"NOT the far lane",tone:"stop",anchor:"middle"}]},
+  {t:"Stop. Shift to D. Drive on",say:"Signal off. Turnabout done.",act:"GO",actors:{me:[-60,275,270]}}
+ ]
+}
+];
+
+const UT=(()=>{const p=[];for(let a=0;a>=-180;a-=12){const t=a*D2R;p.push([300+26*Math.cos(t),330+26*Math.sin(t)]);}return p;})();
+const MORE2=[
+{
+ id:"ylines", group:"Lanes and speed", title:"Yellow lines: when you may cross them", map:"drive", mapOpts:{alley:true,brokenRight:true},
+ control:"No light. Yellow line = oncoming traffic on the other side.",
+ rules:["Broken yellow on YOUR side: passing allowed when the oncoming lane is clear far ahead and no sign forbids it.","Solid yellow on your side: no passing. Double solid: no passing either way.","You MAY cross a solid yellow to turn LEFT into or out of an alley, driveway, private road or side street.","You may cross it to get around an obstruction (stalled car, construction), slowly, when clear.","Turning left at an intersection crosses it too. That's a normal turn.","Roundabout: no yellow line. Go around, never across the center.","Center lane with arrows both ways: left turns only, never for driving or passing."],
+ tip:"Broken on my side: may pass. Solid: no passing, but left turns into driveways and alleys are fine.",
+ steps:[
+  {t:"Broken yellow on YOUR side: passing is allowed",say:"Only when the oncoming lane is clear far ahead and no sign forbids it.",act:"LOOK",light:"none",signal:null,actors:{me:[[-60,325,90],[20,325,90]],c1:{from:[90,325,90],to:[130,325,90]}},marks:[{k:"label",x:140,y:430,text:"Broken line on your side\n= may pass",tone:"go",anchor:"middle"}]},
+  {t:"Signal LEFT, mirror, move out and pass",say:"Never pass near an intersection, hill or curve.",act:"GO",signal:"left",actors:{me:[80,275,90],c1:[150,325,90]}},
+  {t:"Signal RIGHT, return once you see the whole car in your mirror",say:"Don't cut it off.",act:"GO",signal:"right",actors:{me:[230,325,90],c1:[160,325,90]}},
+  {t:"Double solid yellow from here: NO passing",say:"Even if it looks clear.",act:"SLOW",signal:null,actors:{me:[250,325,90]},marks:[{k:"zone",x:285,y:252,w:315,h:46,tone:"stop"},{k:"label",x:440,y:212,text:"Solid line: no passing",tone:"stop",anchor:"middle"}]},
+  {t:"But turning LEFT into the alley across the solid line: ALLOWED",say:"Signal left, yield to oncoming traffic, then turn.",act:"YIELD",signal:"left",actors:{c1:null,c2:{from:[660,275,270],to:[-60,275,270]}},marks:FAR},
+  {t:"Clear: turn in",say:"Same rule for driveways, private roads and side streets.",act:"GO",actors:{c2:null,me:[325,170,0]}},
+  {t:"Leaving the alley turning LEFT across the solid line: also allowed",say:"Stop before the sidewalk, yield both ways, then turn left into the far lane.",act:"STOP",signal:"left",actors:{me:{at:[325,200,180]}},marks:[{k:"bar",x:286,y:222,w:78,h:5,tone:"stop"}]},
+  {t:"Both lanes clear: turn left",say:"Into the lane going your way.",act:"GO",actors:{me:[[400,325,90],[660,325,90]]}},
+  {t:"Roundabout and center turn lane",say:"A roundabout has no yellow line: go around, never across. A center lane with arrows both ways is for left turns only.",act:"LOOK",signal:null}
+ ]
+},
+{
+ id:"uturn", group:"Lanes and speed", title:"U-turns: where they're allowed", map:"cross", mapOpts:{},
+ control:"No signs here. U-turn rules are in the list below.",
+ rules:["Illinois: a U-turn is legal only where no sign forbids it, not on a curve or near a hill crest, and only where drivers 500 ft away in both directions can see you.","Chicago adds limits: generally no U-turns at or within 100 ft of an intersection, and none downtown, unless a sign allows it.","You need both directions clear, like a left turn. Signal left.","On the test: don't make a U-turn unless the examiner asks. Use the turnabout instead."],
+ tip:"No sign against it, 500 ft of view, both ways clear. In Chicago, usually not at intersections. On the test: don't.",
+ steps:[
+  {t:"A U-turn turns you around in one move",say:"It crosses the center line, so it needs the same care as a left turn.",act:"SLOW",light:"none",signal:"left",actors:{me:[[325,620,0],[325,420,0]]}},
+  {t:"Legal only with no sign against it, 500 ft of view, no curve or hill",say:"Oncoming traffic goes first. Wait.",act:"YIELD",actors:{c1:{from:[275,-60,180],to:[275,660,180]}},marks:[{k:"zone",x:252,y:0,w:46,h:250,tone:"yield"}]},
+  {t:"Both directions clear: turn tight, all the way around",say:"Into the nearest lane going the other way. Don't hit the curb.",act:"GO",actors:{c1:null,me:[{pts:UT,h:180},[275,660,180]]}},
+  {t:"Not here: NO U-TURN sign, downtown Chicago, at or near an intersection",say:"Chicago: generally no U-turns at or within 100 ft of an intersection, and none downtown, unless a sign allows it.",act:"STOP",signal:null,actors:{me:{at:[325,560,0]}},marks:[{k:"sign",type:"nou",x:395,y:430},{k:"label",x:420,y:470,text:"No U-turn here",tone:"stop",anchor:"middle"}]},
+  {t:"On the test: use the turnabout, not a U-turn",say:"Unless the examiner asks for one.",act:"LOOK"}
+ ]
+},
+{
+ id:"parallel", group:"Test maneuvers", title:"Parallel parking", map:"straight", mapOpts:{},
+ control:"No light. Not a standard Illinois test item, but practice it anyway.",
+ rules:["Signal RIGHT, stop beside the front car: 2 to 3 ft away, rear bumpers even.","Shift to R. Look over your RIGHT shoulder. Wheel fully RIGHT, back slowly.","At about 45 degrees, straighten the wheel.","When your front bumper clears the front car's rear bumper, wheel fully LEFT.","Back in until parallel. Pull forward to center. Within 12 in of the curb.","Leaving: signal LEFT, back up a little, wheel left, LEFT shoulder check, go when clear."],
+ tip:"Even bumpers. Full right. Straight at 45. Full left when clear. Center it.",
+ steps:[
+  {t:"Space between two parked cars. Signal RIGHT",say:"Pull up beside the front car, 2 to 3 ft away, rear bumpers even.",act:"SLOW",light:"none",signal:"right",actors:{c1:{at:[339,215,0]},c2:{at:[339,385,0]},me:[[325,640,0],[314,215,0]]},marks:[{k:"zone",x:328,y:237,w:24,h:126,tone:"info"},{k:"label",x:380,y:300,text:"The space",tone:"info",anchor:"start"}]},
+  {t:"Stop. Shift to R. Look over your RIGHT shoulder",say:"Mirror check, then look back.",act:"LOOK"},
+  {t:"Wheel fully RIGHT. Back slowly until the car is at 45 degrees",say:"Walking speed. Watch the rear car.",act:"SLOW",actors:{me:{to:[327,290,-30],rev:true}}},
+  {t:"Straighten the wheel. Back until your front clears the front car",say:"Keep looking back.",act:"SLOW",actors:{me:{to:[334,302,-30],rev:true}}},
+  {t:"Wheel fully LEFT. Back in until parallel",say:"The nose swings in. Stop before the rear car.",act:"SLOW",actors:{me:{to:[339,340,0],rev:true}}},
+  {t:"Shift to D. Pull forward to center. Wheels straight",say:"Within 12 in of the curb, not touching.",act:"SLOW",actors:{me:[339,300,0]},marks:[{k:"zone",x:340,y:280,w:12,h:40,tone:"info"},{k:"label",x:380,y:300,text:"within 12 in",tone:"info",anchor:"start"}]},
+  {t:"Stop. P. Parking brake. Signal off",say:"One try is ideal. A careful second try is fine.",act:"STOP",signal:null},
+  {t:"Leaving: signal LEFT, back up a little, wheel LEFT",say:"Look over your LEFT shoulder. Traffic goes first.",act:"WAIT",signal:"left",actors:{me:{to:[339,318,0],rev:true},c3:{from:[325,720,0],to:[325,-60,0]}}},
+  {t:"Clear: pull out slowly",say:"Watch your front right corner near the car ahead.",act:"GO",actors:{c3:null,me:[[318,150,0],[325,-60,0]]}},
+  {t:"Signal off",say:"Done.",act:"GO",signal:null}
+ ]
+}
+];
+const ORDER=["lot-right","lot-left","precheck","drive-back","lot-in-right","lot-in-left","green-right","red-right","green-left","arrows","oneway-left","flash","yellow","allway","twoway","stop-queue","tee","yieldsign","uncontrolled","roundabout","lane4","lane","speed","bike","curb","ylines","uturn","school","ped","bus2","busdiv","rail","emerg","talley","turnabout","back","hill","parallel"];
+const ALL=LESSONS_SRC.concat(MORE,MORE2);
+const LESSONS=ORDER.map(id=>ALL.find(l=>l.id===id));
+const GROUP_OF={allway:"Stop and yield signs",twoway:"Stop and yield signs",uncontrolled:"Stop and yield signs",lane:"Lanes and speed",rail:"Railroad",emerg:"Emergency vehicles"};
+LESSONS.forEach(l=>{if(GROUP_OF[l.id])l.group=GROUP_OF[l.id];});
+
+/* ---------- map drawing ---------- */
+function stopSign(p,x,y,plate){
+  const g=el("g",{transform:`translate(${x},${y})`},p);
+  el("line",{x1:0,y1:12,x2:0,y2:plate?34:24,stroke:"#666","stroke-width":2},g);
+  el("polygon",{points:octPts(0,0,12),fill:"#c4302b",stroke:"#fff","stroke-width":1.5},g);
+  txt(g,0,3,"STOP",7,"#fff");
+  if(plate){rect(g,-15,15,30,9,"",{fill:"#fff",stroke:"#c4302b","stroke-width":1});txt(g,0,22,plate,6.5,"#c4302b");}
+}
+function onewaySign(p,x,y,rot){
+  const g=el("g",{transform:`translate(${x},${y}) rotate(${rot})`},p);
+  rect(g,-22,-8,44,16,"",{fill:"#111",rx:2});
+  el("path",{d:"M-18 0 L-8 -6 V-2 H18 V2 H-8 V6 Z",fill:"#fff"},g);
+}
+let sceneLight=null;
+function drawSceneLight(p){
+  const g=el("g",{},p);
+  rect(g,404,206,3,30,"",{fill:"#777"});
+  rect(g,394,140,22,70,"",{fill:"#16191c",rx:4});
+  const lamps={};
+  [["r",152],["y",168],["g",184]].forEach(([k,cy])=>{lamps[k]=el("circle",{cx:405,cy,r:6,fill:"#2b2f33"},g);});
+  lamps.arrow=el("path",{d:"M399 200 L404 195.5 V198.5 H411 V201.5 H404 V204.5 Z",fill:"#3a3f44"},g);
+  sceneLight=lamps;
+}
+function drawCross(g,o){
+  rect(g,0,0,600,600,"s-grass");
+  rect(g,230,0,20,600,"s-walk");rect(g,350,0,20,600,"s-walk");rect(g,0,230,600,20,"s-walk");rect(g,0,350,600,20,"s-walk");
+  rect(g,250,0,100,600,"s-asph");rect(g,0,250,600,100,"s-asph");
+  for(let x=254;x<346;x+=12){rect(g,x,356,7,18,"s-mark");rect(g,x,226,7,18,"s-mark");}
+  for(let y=254;y<346;y+=12){rect(g,226,y,18,7,"s-mark");rect(g,356,y,18,7,"s-mark");}
+  if(o.oneway){
+    rect(g,250,380,100,5,"s-mark");rect(g,380,250,5,100,"s-mark");
+    for(let y=392;y<600;y+=28)rect(g,299,y,2,14,"s-mark");
+    for(let y=0;y<214;y+=28)rect(g,299,y,2,14,"s-mark");
+    for(let x=392;x<600;x+=28)rect(g,x,299,14,2,"s-mark");
+    for(let x=0;x<214;x+=28)rect(g,x,299,14,2,"s-mark");
+    [275,325].forEach(x=>el("path",{d:`M${x} 500 l-7 10 h4 v14 h6 v-14 h4 z`,class:"s-mark"},g));
+    [275,325].forEach(y=>el("path",{d:`M470 ${y} l10 -7 v4 h14 v6 h-14 v4 z`,class:"s-mark"},g));
+    onewaySign(g,400,470,-90);onewaySign(g,470,214,0);
+  } else {
+    rect(g,300,380,50,5,"s-mark");rect(g,250,215,50,5,"s-mark");rect(g,215,300,5,50,"s-mark");rect(g,380,250,5,50,"s-mark");
+    [[297,385,2,215],[301,385,2,215],[297,0,2,215],[301,0,2,215]].forEach(r=>rect(g,r[0],r[1],r[2],r[3],"s-yl"));
+    [[385,297,215,2],[385,301,215,2],[0,297,215,2],[0,301,215,2]].forEach(r=>rect(g,r[0],r[1],r[2],r[3],"s-yl"));
+  }
+  if(o.tee){rect(g,230,0,140,232,"s-grass");rect(g,230,230,140,20,"s-walk");}
+  (o.yields||[]).forEach(side=>{
+    const yg=el("g",{transform:"translate(384,402)"},g);
+    el("line",{x1:0,y1:0,x2:0,y2:22,stroke:"#666","stroke-width":2},yg);
+    el("polygon",{points:"-12,-8 12,-8 0,12",fill:"#fff",stroke:"#c4302b","stroke-width":3,"stroke-linejoin":"round"},yg);
+  });
+  const pl=o.allway?"ALL-WAY":null;
+  (o.stops||[]).forEach(s=>{
+    if(s==="S")stopSign(g,384,402,pl);
+    if(s==="N")stopSign(g,216,196,pl);
+    if(s==="E")stopSign(g,402,216,pl);
+    if(s==="W")stopSign(g,198,384,pl);
+  });
+  if(o.light)drawSceneLight(g);
+}
+function drawDrive(g,o){
+  o=o||{};
+  rect(g,0,0,600,600,"s-grass");
+  rect(g,0,250,600,100,"s-asph");
+  rect(g,0,224,600,24,"s-walk");rect(g,0,352,600,24,"s-walk");
+  rect(g,0,297,600,2,"s-yl");
+  if(o.brokenRight){for(let x=0;x<270;x+=28)rect(g,x,301,14,2,"s-yl");rect(g,285,301,315,2,"s-yl");}
+  else rect(g,0,301,600,2,"s-yl");
+  const bush=([x,y,r])=>el("circle",{cx:x,cy:y,r,class:"s-grass2",stroke:"rgba(0,0,0,.15)"},g);
+  if(o.alley){
+    rect(g,285,0,80,250,"s-asph");
+    rect(g,285,224,80,24,"s-walk",{opacity:.75});
+    [[262,196,15],[236,202,13],[210,196,12],[392,196,15],[418,202,13],[444,196,12]].forEach(bush);
+    txt(g,325,60,"ALLEY",14,"#fff",{opacity:.6});
+    txt(g,20,392,"STREET",14,"currentColor",{opacity:.55,"text-anchor":"start"});
+    return;
+  }
+  rect(g,285,350,80,80,"s-asph");
+  rect(g,285,352,80,24,"s-walk",{opacity:.75});
+  rect(g,100,420,400,180,"s-asph");
+  if(!o.noCars){
+    for(let x=120;x<=260;x+=36)rect(g,x,480,2,70,"s-mark");
+    for(let x=390;x<=480;x+=36)rect(g,x,480,2,70,"s-mark");
+    [[140,515,"#8d97a0"],[212,515,"#a5585a"],[426,515,"#6f8a7a"]].forEach(([x,y,c])=>{
+      const cg=el("g",{transform:`translate(${x},${y})`},g);
+      rect(cg,-11,-20,22,40,"",{rx:5,fill:c,opacity:.85});rect(cg,-8,-11,16,7,"",{rx:2,fill:"#cfd8e0",opacity:.6});
+    });
+  }
+  [[262,398,15],[236,404,13],[210,398,12],[392,398,15],[418,404,13],[444,398,12]].forEach(bush);
+  txt(g,20,216,"STREET",14,"currentColor",{opacity:.55,"text-anchor":"start"});
+  txt(g,116,592,o.label||"PARKING LOT",14,"#fff",{opacity:.6,"text-anchor":"start"});
+}
+function drawRound(g){
+  rect(g,0,0,600,600,"s-grass");
+  rect(g,250,0,100,600,"s-asph");rect(g,0,250,600,100,"s-asph");
+  for(let k=0;k<4;k++){
+    const lg=el("g",{transform:`rotate(${k*90} 300 300)`},g);
+    rect(lg,230,470,20,130,"s-walk");rect(lg,350,470,20,130,"s-walk");
+  }
+  el("circle",{cx:300,cy:300,r:138,class:"s-asph"},g);
+  el("circle",{cx:300,cy:300,r:72,class:"s-walk"},g);
+  el("circle",{cx:300,cy:300,r:62,class:"s-grass2"},g);
+  for(let k=0;k<4;k++){
+    const lg=el("g",{transform:`rotate(${k*90} 300 300)`},g);
+    el("polygon",{points:"294,442 306,442 304,520 296,520",class:"s-walk"},lg);
+    for(let x=254;x<292;x+=12)rect(lg,x,480,7,18,"s-mark");
+    for(let x=310;x<346;x+=12)rect(lg,x,480,7,18,"s-mark");
+    for(let x=306;x<346;x+=10)el("polygon",{points:`${x},442 ${x+8},442 ${x+4},450`,class:"s-mark"},lg);
+    rect(lg,297,520,2,80,"s-yl");rect(lg,301,520,2,80,"s-yl");
+    const yg=el("g",{transform:"translate(382,452)"},lg);
+    el("line",{x1:0,y1:0,x2:0,y2:20,stroke:"#666","stroke-width":2},yg);
+    el("polygon",{points:"-11,-7 11,-7 0,11",fill:"#fff",stroke:"#c4302b","stroke-width":3,"stroke-linejoin":"round"},yg);
+  }
+}
+function drawStraight(g,o){
+  rect(g,0,0,600,600,"s-grass");
+  let x0=250,w=100;
+  if(o.divided){
+    x0=200;w=200;
+    rect(g,174,0,24,600,"s-walk");rect(g,402,0,24,600,"s-walk");
+    rect(g,200,0,200,600,"s-asph");
+    rect(g,290,0,20,600,"s-grass2");
+    rect(g,287,0,2,600,"s-yl");rect(g,311,0,2,600,"s-yl");
+    for(let y=0;y<600;y+=28){rect(g,246,y,2,14,"s-mark");rect(g,352,y,2,14,"s-mark");}
+  } else if(o.oneway2){
+    x0=225;w=150;
+    rect(g,200,0,24,600,"s-walk");rect(g,376,0,24,600,"s-walk");
+    rect(g,225,0,150,600,"s-asph");
+    rect(g,229,0,2,600,"s-mark");rect(g,369,0,2,600,"s-mark");
+    for(let y=0;y<600;y+=28)rect(g,299,y,2,14,"s-mark");
+    [262,338].forEach(x=>el("path",{d:`M${x} 560 l-7 10 h4 v14 h6 v-14 h4 z`,class:"s-mark"},g));
+  } else if(o.four){
+    x0=200;w=200;
+    rect(g,174,0,24,600,"s-walk");rect(g,402,0,24,600,"s-walk");
+    rect(g,200,0,200,600,"s-asph");
+    rect(g,297,0,2,600,"s-yl");rect(g,301,0,2,600,"s-yl");
+    for(let y=0;y<600;y+=28){rect(g,249,y,2,14,"s-mark");rect(g,349,y,2,14,"s-mark");}
+  } else {
+    rect(g,224,0,24,600,"s-walk");rect(g,352,0,24,600,"s-walk");
+    rect(g,250,0,100,600,"s-asph");
+    rect(g,297,0,2,600,"s-yl");rect(g,301,0,2,600,"s-yl");
+  }
+  (o.speedSigns||[]).forEach(([y,v])=>{
+    const sg=el("g",{transform:`translate(392,${y})`},g);
+    el("line",{x1:0,y1:0,x2:0,y2:34,stroke:"#666","stroke-width":3},sg);
+    rect(sg,-12,-18,24,36,"",{fill:"#fff",stroke:"#111","stroke-width":1.5,rx:2});
+    txt(sg,0,-8,"SPEED",5,"#111");txt(sg,0,-2,"LIMIT",5,"#111");txt(sg,0,12,String(v),13,"#111");
+  });
+  if(o.crosswalk){
+    for(let x=x0+4;x<x0+w-4;x+=12)rect(g,x,290,7,20,"s-mark");
+    rect(g,x0,318,w,5,"s-mark");
+  }
+  if(o.rail){
+    rect(g,0,236,600,28,"",{fill:"#6b5a44"});
+    for(let x=4;x<600;x+=16)rect(g,x,238,8,24,"",{fill:"#4a3b28"});
+    rect(g,0,242,600,3,"",{fill:"#9aa0a6"});rect(g,0,255,600,3,"",{fill:"#9aa0a6"});
+    rect(g,250,330,100,4,"s-mark");
+    txt(g,300,215,"R R",26,"#fff",{opacity:.8});
+    const cb=el("g",{transform:"translate(392,300)"},g);
+    el("line",{x1:0,y1:0,x2:0,y2:44,stroke:"#666","stroke-width":3},cb);
+    [45,-45].forEach((r,i)=>{const a=el("g",{transform:`rotate(${r})`},cb);rect(a,-24,-5,48,10,"",{fill:"#fff",stroke:"#111","stroke-width":1});txt(a,0,3,i?"CROSSING":"RAILROAD",6,"#111");});
+    const sg=el("g",{id:"fx-rail"},g);
+    el("rect",{x:388,y:262,width:3,height:22,fill:"#666"},sg);
+    el("circle",{cx:382,cy:268,r:6,class:"rlamp"},sg);el("circle",{cx:397,cy:268,r:6,class:"rlamp"},sg);
+    el("rect",{x:352,y:296,width:8,height:8,fill:"#666"},sg);
+    const gate=el("g",{class:"gate"},sg);
+    rect(gate,255,297,100,6,"",{fill:"#fff"});
+    for(let x=260;x<350;x+=24)rect(gate,x,297,12,6,"",{fill:"#c4302b"});
+    const ws=el("g",{transform:"translate(392,480)"},g);
+    el("line",{x1:0,y1:0,x2:0,y2:30,stroke:"#666","stroke-width":3},ws);
+    el("circle",{r:17,fill:"#f2c230",stroke:"#111","stroke-width":1.5},ws);
+    el("path",{d:"M-9 -9 L9 9 M9 -9 L-9 9",stroke:"#111","stroke-width":3},ws);
+    txt(ws,-11,3,"R",7,"#111");txt(ws,11,3,"R",7,"#111");
+  }
+  if(o.school){
+    const sg=el("g",{transform:"translate(392,520)"},g);
+    el("line",{x1:0,y1:0,x2:0,y2:34,stroke:"#666","stroke-width":3},sg);
+    el("polygon",{points:"0,-20 18,-7 13,16 -13,16 -18,-7",fill:"#c6e62b",stroke:"#111","stroke-width":1.5},sg);
+    txt(sg,0,2,"SCHOOL",7,"#111");txt(sg,0,11,"20 MPH",7,"#111");
+    const eg=el("g",{transform:"translate(392,380)"},g);
+    el("line",{x1:0,y1:0,x2:0,y2:30,stroke:"#666","stroke-width":3},eg);
+    el("polygon",{points:"0,-18 16,-6 12,14 -12,14 -16,-6",fill:"#c6e62b",stroke:"#111","stroke-width":1.5},eg);
+    el("circle",{cx:-4,cy:-7,r:2.5,fill:"#111"},eg);el("circle",{cx:4,cy:-9,r:3,fill:"#111"},eg);
+    el("path",{d:"M-4 -4 v10 M4 -5 v11 M-7 0 h6 M1 -1 h6",stroke:"#111","stroke-width":2},eg);
+  }
+  if(o.pedSign){
+    const pg=el("g",{transform:"translate(392,400)"},g);
+    el("line",{x1:0,y1:0,x2:0,y2:34,stroke:"#666","stroke-width":3},pg);
+    el("polygon",{points:"0,-20 20,0 0,20 -20,0",fill:"#f2c230",stroke:"#111","stroke-width":1.5},pg);
+    el("circle",{cx:0,cy:-9,r:3,fill:"#111"},pg);
+    el("path",{d:"M0 -5 v9 M-5 -2 h10 M0 4 l-4 8 M0 4 l4 8",stroke:"#111","stroke-width":2.2,fill:"none"},pg);
+  }
+}
+
+/* ---------- actors ---------- */
+const actorEls={};
+const CAR_COLORS={c1:"var(--car1)",c2:"var(--car2)",c3:"var(--car3)"};
+function makeActor(id){
+  const layer=document.getElementById("actors");
+  const g=el("g",{class:"actor"+(id==="me"?" me":"")},layer);
+  const k=id==="me"?"me":id[0];
+  if(k==="p"){
+    el("circle",{r:7,fill:"var(--ped)",stroke:"#fff","stroke-width":2},g);
+    el("circle",{r:2.6,fill:"#fff"},g);
+  } else if(k==="g"){
+    el("circle",{r:8,fill:"#ff8a00",stroke:"#fff","stroke-width":2},g);
+    el("line",{x1:6,y1:-4,x2:16,y2:-14,stroke:"#555","stroke-width":2},g);
+    el("polygon",{points:octPts(18,-18,8),fill:"#c4302b",stroke:"#fff","stroke-width":1},g);
+  } else if(k==="b"){
+    rect(g,-12,-36,24,72,"car-body",{rx:5,fill:"#f2c230"});
+    rect(g,-12,-6,24,3,"",{fill:"#111"});rect(g,-12,4,24,3,"",{fill:"#111"});
+    rect(g,-9,-30,18,8,"",{rx:2,fill:"var(--glass)"});
+    [[-8,-35],[8,-35],[-8,35],[8,35]].forEach(([x,y])=>el("circle",{cx:x,cy:y,r:3,class:"blamp"},g));
+    const arm=el("g",{class:"barm"},g);
+    el("line",{x1:-12,y1:-10,x2:-24,y2:-10,stroke:"#111","stroke-width":2},arm);
+    el("polygon",{points:octPts(-26,-10,7),fill:"#c4302b",stroke:"#fff","stroke-width":1},arm);
+    txt(g,0,0,"BUS",8,"#111",{transform:"rotate(-90) translate(-14 3)"});
+  } else if(k==="k"){
+    rect(g,-2,-9,4,18,"",{rx:2,fill:"#222"});
+    el("circle",{r:5,fill:"#ff8a00",stroke:"#fff","stroke-width":1.5},g);
+  } else if(k==="t"){
+    rect(g,-13,-90,26,180,"",{rx:4,fill:"#3b3f48",stroke:"#111"});
+    rect(g,-13,-90,26,24,"",{rx:4,fill:"#d9b020"});
+    for(let y=-55;y<85;y+=16)rect(g,-9,y,18,8,"",{fill:"#8a94a6"});
+  } else if(k==="e"){
+    rect(g,-11,-20,22,40,"car-body",{rx:5,fill:"#f4f4f2"});
+    rect(g,-11,-4,22,8,"",{fill:"#c4302b"});
+    rect(g,-8,-11,16,7,"",{rx:2,fill:"var(--glass)"});
+    rect(g,-8,-3,8,6,"el-r",{fill:"#ff3b30"});rect(g,0,-3,8,6,"el-b",{fill:"#2f7bff"});
+  } else {
+    if(id==="me")el("circle",{r:28,class:"halo"},g);
+    rect(g,-11,-20,22,40,"car-body",{rx:5,fill:id==="me"?"var(--me)":(CAR_COLORS[id]||"var(--car2)")});
+    rect(g,-8,-11,16,7,"",{rx:2,fill:"var(--glass)"});
+    rect(g,-8,11,16,5,"",{rx:2,fill:"var(--glass)",opacity:.8});
+    [[-8,-19,"L"],[8,-19,"R"],[-8,19,"L"],[8,19,"R"]].forEach(([x,y,s])=>el("circle",{cx:x,cy:y,r:2.8,class:"carlamp cl-"+s},g));
+    if(id==="me")txt(g,0,0,"YOU",13,"#fff",{transform:"rotate(-90) translate(-3 4.5)"});
+  }
+  g.style.opacity="0";
+  setTimeout(()=>{g.style.opacity="1";},30);
+  actorEls[id]=g;return g;
+}
+function placeActor(id,p){
+  let g=actorEls[id];if(!g)g=makeActor(id);
+  const k=id==="me"?"me":id[0];
+  if(k==="p"||k==="g")g.setAttribute("transform",`translate(${p[0].toFixed(1)},${p[1].toFixed(1)})`);
+  else g.setAttribute("transform",`translate(${p[0].toFixed(1)},${p[1].toFixed(1)}) rotate(${p[2].toFixed(1)})`);
+}
+function removeActor(id){const g=actorEls[id];if(!g)return;delete actorEls[id];g.style.opacity="0";setTimeout(()=>g.remove(),360);}
+function clearActors(){for(const id in actorEls){actorEls[id].remove();delete actorEls[id];}}
+function applyFx(fx){
+  for(const id in actorEls)actorEls[id].classList.toggle("fx",!!fx[id]);
+  for(const k in fx){const m=document.getElementById("fx-"+k);if(m)m.classList.toggle("on",!!fx[k]);}
+}
+
+/* ---------- motion planning ---------- */
+function full(p){return [p[0],p[1],p[2]===undefined?0:p[2]];}
+function legsOf(s){
+  if(Array.isArray(s)){ if(typeof s[0]==="number")return [{to:s}]; return s.flatMap(legsOf); }
+  if(s.at)return [{at:s.at}];
+  if(s.from)return [{at:s.from}].concat(legsOf(s.to));
+  if(s.pts)return [{pts:s.pts,h:s.h}];
+  return [{to:s.to,rev:s.rev,c:s.c}];
+}
+function seg(P,T,rev,ctrl){
+  const a=[P[0],P[1]],b=[T[0],T[1]];
+  if(ctrl)return bez(a,ctrl,b);
+  const tp=rev?P[2]+180:P[2],tt=rev?T[2]+180:T[2];
+  const dp=dir(tp),dt=dir(tt),rx=b[0]-a[0],ry=b[1]-a[1];
+  const det=dp[0]*dt[1]-dt[0]*dp[1];
+  if(Math.abs(det)>1e-6){
+    const s=(rx*dt[1]-dt[0]*ry)/det,u=(dp[0]*ry-dp[1]*rx)/det;
+    if(s>0&&u>0)return bez(a,[a[0]+s*dp[0],a[1]+s*dp[1]],b);
+  }
+  return [a,b];
+}
+function lastHeading(pts){for(let i=pts.length-1;i>0;i--){const dx=pts[i][0]-pts[i-1][0],dy=pts[i][1]-pts[i-1][1];if(Math.hypot(dx,dy)>.01)return headingOf(dx,dy);}return 0;}
+function buildTrack(pose,spec,isPed){
+  const chunks=[];let cur=pose;
+  for(const L of legsOf(spec)){
+    if(L.at){cur=full(L.at);chunks.push({pts:[[cur[0],cur[1]]],h:cur[2]});continue;}
+    if(L.pts){
+      if(!cur){const p0=L.pts[0],p1=L.pts[1];cur=[p0[0],p0[1],headingOf(p1[0]-p0[0],p1[1]-p0[1])];chunks.push({pts:[p0],h:cur[2]});}
+      const pts=[[cur[0],cur[1]]].concat(L.pts);const h=L.h===undefined?lastHeading(pts):L.h;
+      chunks.push({pts,h});cur=[pts[pts.length-1][0],pts[pts.length-1][1],h];continue;
+    }
+    const T=full(L.to);
+    if(!cur){cur=T;chunks.push({pts:[[T[0],T[1]]],h:T[2]});continue;}
+    const pts=isPed?[[cur[0],cur[1]],[T[0],T[1]]]:seg(cur,T,L.rev,L.c);
+    chunks.push({pts,h:T[2],rev:!!L.rev});cur=T;
+  }
+  let total=0;
+  for(const c of chunks){c.cum=[0];for(let i=1;i<c.pts.length;i++)c.cum.push(c.cum[i-1]+Math.hypot(c.pts[i][0]-c.pts[i-1][0],c.pts[i][1]-c.pts[i-1][1]));c.len=c.cum[c.cum.length-1];c.start=total;total+=c.len;}
+  return {chunks,total,end:cur,ped:isPed};
+}
+function poseAt(tr,d){
+  let pose=null;
+  for(const c of tr.chunks){
+    if(c.len===0){pose=[c.pts[0][0],c.pts[0][1],c.h];continue;}
+    const local=d-c.start;
+    if(local>=c.len){const p=c.pts[c.pts.length-1];pose=[p[0],p[1],c.h];continue;}
+    let i=1;while(i<c.cum.length-1&&c.cum[i]<local)i++;
+    const a=c.pts[i-1],b=c.pts[i],sl=c.cum[i]-c.cum[i-1],t=sl?(local-c.cum[i-1])/sl:0;
+    let h=headingOf(b[0]-a[0],b[1]-a[1]);if(c.rev)h+=180;
+    return [a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,h];
+  }
+  return pose;
+}
+const isPedId=id=>id!=="me"&&(id[0]==="p"||id[0]==="g");
+function applyStep(st,step){
+  const poses=Object.assign({},st.poses),tracks={},removed=[];
+  const acts=step.actors||{};
+  for(const id in acts){
+    const spec=acts[id];
+    if(spec===null){if(poses[id]){delete poses[id];removed.push(id);}continue;}
+    const tr=buildTrack(poses[id],spec,isPedId(id));
+    tracks[id]=tr;poses[id]=tr.end;
+  }
+  return {poses,tracks,removed,
+    light:step.light!==undefined?step.light:st.light,
+    signal:step.signal!==undefined?step.signal:st.signal,
+    fx:step.fx?Object.assign({},st.fx,step.fx):st.fx};
+}
+function simulate(lesson,k){let st={poses:{},light:"none",signal:null,fx:{}};for(let i=0;i<k;i++)st=applyStep(st,lesson.steps[i]);return st;}
+
+/* ---------- marks ---------- */
+const TONE={stop:"var(--stop)",yield:"var(--yield)",go:"var(--go)",info:"var(--info)"};
+let lastMarks=null;
+function drawMarks(step,meTrack){
+  lastMarks=[step,meTrack];
+  const mk=document.getElementById("marks"),lb=document.getElementById("labels");
+  mk.innerHTML="";lb.innerHTML="";
+  if(meTrack&&meTrack.total>1){
+    const pts=[];meTrack.chunks.forEach(c=>{if(c.len>0)c.pts.forEach(p=>pts.push(p[0].toFixed(1)+","+p[1].toFixed(1)));});
+    el("polyline",{points:pts.join(" "),fill:"none",stroke:"var(--me)","stroke-width":4,"stroke-dasharray":"2 9","stroke-linecap":"round",opacity:.9},mk);
+  }
+  (step.marks||[]).forEach(m=>{
+    const col=TONE[m.tone]||TONE.info;
+    if(m.k==="bar")rect(mk,m.x,m.y,m.w,m.h,"mk-pulse",{fill:col,rx:2});
+    else if(m.k==="zone")rect(mk,m.x,m.y,m.w,m.h,"",{fill:col,"fill-opacity":.2,stroke:col,"stroke-width":2,"stroke-dasharray":"6 5"});
+    else if(m.k==="sign"){
+      const g=el("g",{transform:`translate(${m.x},${m.y})`},lb);
+      if(m.type==="nou"){
+        rect(g,-20,-20,40,40,"",{fill:"#fff",stroke:"#111","stroke-width":1.5,rx:2});
+        el("path",{d:"M-7 10 V-3 a7 7 0 0 1 14 0 V5 M7 5 l-4 -4 M7 5 l4 -4",stroke:"#111","stroke-width":3,fill:"none"},g);
+        el("circle",{r:15,fill:"none",stroke:"#c4302b","stroke-width":3},g);
+        el("line",{x1:-11,y1:-11,x2:11,y2:11,stroke:"#c4302b","stroke-width":3},g);
+      } else {
+        rect(g,-24,-18,48,36,"",{fill:"#fff",stroke:"#111","stroke-width":1.5,rx:2});
+        ["NO TURN","ON RED"].forEach((s,i)=>txt(g,0,-3+i*13,s,11,"#111"));
+      }
+    }
+    else if(m.k==="wheels"){[-9,9].forEach(dx=>rect(lb,m.x+dx-2.5,m.y-6,5,12,"",{fill:"#111",stroke:"#fff","stroke-width":1,transform:`rotate(${m.a} ${m.x+dx} ${m.y})`}));}
+    else if(m.k==="label")label(lb,m.x,m.y,m.text,col,m.anchor||"middle");
+  });
+}
+function label(p,x,y,text,col,anchor){
+  const g=el("g",{},p);const lines=text.split("\n");const fs=15,lh=17;
+  const bg=el("rect",{rx:5,fill:col},g);
+  const t=el("text",{"font-size":fs,fill:"#fff",class:"s-txt","text-anchor":"start"},g);
+  lines.forEach((s,i)=>{const ts=el("tspan",{x:0,dy:i?lh:0},t);ts.textContent=s;});
+  let w=0;try{w=t.getBBox().width;}catch(e){}
+  if(!w)w=Math.max(...lines.map(s=>s.length))*7.2;
+  const pad=7,bw=w+pad*2,bh=lines.length*lh+8;
+  let left=anchor==="start"?x:anchor==="end"?x-bw:x-bw/2;
+  left=Math.max(4,Math.min(596-bw,left));
+  let top=Math.max(4,Math.min(596-bh,y-bh/2));
+  bg.setAttribute("x",left);bg.setAttribute("y",top);bg.setAttribute("width",bw);bg.setAttribute("height",bh);
+  t.setAttribute("transform",`translate(${left+pad},${top+4+fs-2})`);
+  t.querySelectorAll("tspan").forEach(ts=>ts.setAttribute("x",0));
+}
+
+/* ---------- panel ---------- */
+const ARROW_SVG='<svg viewBox="0 0 20 20"><path d="M1 10 L9 3 V7 H19 V13 H9 V17 Z"/></svg>';
+const LIGHT_TEXT={
+  "r":"Solid RED: stop behind the line. Right turn OK after a full stop if clear, unless a sign says no.",
+  "y":"Solid YELLOW: red is coming. Stop if you safely can. Already in the intersection? Finish.",
+  "g":"Solid GREEN: go if clear. Turns yield to pedestrians; left turns yield to oncoming cars.",
+  "g+ga":"GREEN ARROW: protected turn. Oncoming traffic has a red.",
+  "g+fya":"FLASHING YELLOW ARROW: left turn allowed, but yield to oncoming traffic and pedestrians first.",
+  "fr":"FLASHING RED: same as a STOP sign. Full stop, go when clear.",
+  "fy":"FLASHING YELLOW: slow down, look both ways, proceed with caution."
+};
+function parseLight(s){
+  const o={ball:null,bf:false,arrow:null,af:false};
+  if(!s||s==="none")return null;
+  s.split("+").forEach(t=>{
+    if(t==="r"||t==="y"||t==="g")o.ball=t;
+    else if(t==="fr"||t==="fy"){o.ball=t[1];o.bf=true;}
+    else if(t==="ga")o.arrow="g";else if(t==="ya")o.arrow="y";else if(t==="ra")o.arrow="r";
+    else if(t==="fya"){o.arrow="y";o.af=true;}
+  });
+  return o;
+}
+function lightHTML(o){
+  const L=(c,on,f)=>`<div class="lamp ${c}${on?" on":""}${on&&f?" flash":""}"></div>`;
+  return `<div class="tl">${L("red",o.ball==="r",o.bf)}${L("yellow",o.ball==="y",o.bf)}${L("green",o.ball==="g",o.bf)}<div class="lamp arrow${o.arrow?" a"+o.arrow:""}${o.af?" flash":""}">${ARROW_SVG}</div></div>`;
+}
+function renderPanel(lesson,st,step){
+  const box=document.getElementById("lightbox");
+  const o=parseLight(st.light);
+  if(!o)box.innerHTML=`<div class="nolight"><b>No light.</b> <span class="more">${lesson.control||""}</span></div>`;
+  else box.innerHTML=`<div class="tlrow">${lightHTML(o)}<div class="tltext">${LIGHT_TEXT[st.light]||""}</div></div>`;
+  if(sceneLight){
+    const c={r:"#ff3b30",y:"#ffcc00",g:"#2fd158"};
+    ["r","y","g"].forEach(k=>{sceneLight[k].setAttribute("fill",o&&o.ball===k?c[k]:"#2b2f33");sceneLight[k].classList.toggle("flash",!!(o&&o.ball===k&&o.bf));});
+    sceneLight.arrow.setAttribute("fill",o&&o.arrow?c[o.arrow]:"#3a3f44");
+    sceneLight.arrow.classList.toggle("flash",!!(o&&o.af));
+  }
+  document.getElementById("sigL").classList.toggle("on",st.signal==="left");
+  document.getElementById("sigR").classList.toggle("on",st.signal==="right");
+  document.getElementById("sigtext").textContent=st.signal==="left"?"LEFT signal on":st.signal==="right"?"RIGHT signal on":"Off";
+  const me=actorEls.me;if(me){me.classList.toggle("sig-left",st.signal==="left");me.classList.toggle("sig-right",st.signal==="right");}
+  applyFx(st.fx||{});
+  const a=document.getElementById("action");a.textContent=step.act;a.className="action "+step.act;
+}
+
+/* ---------- player ---------- */
+let L=0,K=0,anim=null,playing=false,dwell=null,speed=1;
+let doneSet=new Set();try{doneSet=new Set(JSON.parse(localStorage.getItem("ilturns-done")||"[]"));}catch(e){}
+function saveDone(){try{localStorage.setItem("ilturns-done",JSON.stringify([...doneSet]));}catch(e){}}
+const ease=p=>p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;
+
+function loadLesson(i,autoplay){
+  stopAll();L=i;const lesson=LESSONS[i];
+  const map=document.getElementById("map");map.innerHTML="";sceneLight=null;clearActors();
+  const o=lesson.mapOpts||{};
+  if(lesson.map==="drive")drawDrive(map,o);
+  else if(lesson.map==="round")drawRound(map);
+  else if(lesson.map==="straight")drawStraight(map,o);
+  else if(lesson.map==="oneway")drawCross(map,Object.assign({oneway:true},o));
+  else drawCross(map,o);
+  document.getElementById("ltitle").textContent=(i+1)+". "+lesson.title;
+  document.getElementById("lsub").textContent=lesson.steps.length+" steps";
+  document.getElementById("rules").innerHTML=lesson.rules.map(r=>`<li>${r}</li>`).join("");
+  document.getElementById("tip").textContent=lesson.tip;
+  const dots=document.getElementById("dots");dots.innerHTML="";
+  lesson.steps.forEach((s,k)=>{const b=document.createElement("button");b.className="dot";b.textContent=k+1;b.setAttribute("aria-label","Step "+(k+1)+": "+s.t);b.onclick=()=>{setPlaying(false);goTo(k,true);};dots.appendChild(b);});
+  renderRail();
+  goTo(0,false);
+  if(autoplay)setPlaying(true);
+}
+function stopAll(){if(anim){cancelAnimationFrame(anim.raf);anim=null;}if(dwell){clearTimeout(dwell);dwell=null;}}
+function keepStageInView(){
+  if(!matchMedia("(max-width:760px)").matches)return;
+  const r=document.querySelector(".stagebox").getBoundingClientRect();
+  const cap=document.querySelector(".caption").getBoundingClientRect();
+  const limit=innerHeight-84;
+  if(r.top<0||cap.bottom>limit)window.scrollTo({top:scrollY+r.top-6,behavior:"smooth"});
+}
+function goTo(k,animate){
+  stopAll();
+  if(animate)keepStageInView();
+  const lesson=LESSONS[L];K=Math.max(0,Math.min(lesson.steps.length-1,k));
+  document.getElementById("nextcta").hidden=true;
+  const prev=simulate(lesson,K);
+  for(const id in actorEls)if(!prev.poses[id]){actorEls[id].remove();delete actorEls[id];}
+  for(const id in prev.poses)placeActor(id,prev.poses[id]);
+  const step=lesson.steps[K];
+  const res=applyStep(prev,step);
+  res.removed.forEach(removeActor);
+  drawMarks(step,res.tracks.me);
+  renderPanel(lesson,res,step);
+  renderCaption(lesson,step);
+  const finish=()=>{
+    for(const id in res.tracks){if(res.tracks[id].end)placeActor(id,res.tracks[id].end);}
+    renderPanel(lesson,res,step);
+    anim=null;onStepDone(step);
+  };
+  const ids=Object.keys(res.tracks);
+  if(!animate||!ids.length){finish();return;}
+  ids.forEach(id=>{const p=poseAt(res.tracks[id],0);if(p)placeActor(id,p);});
+  renderPanel(lesson,res,step);
+  const durs={};let maxD=0;
+  ids.forEach(id=>{const tr=res.tracks[id];const v=tr.ped?55:(id[0]==="t"?260:id[0]==="k"?70:150);durs[id]=tr.total>0?Math.max(.35,tr.total/v)*1000/speed:0;maxD=Math.max(maxD,durs[id]);});
+  const t0=performance.now();
+  const frame=now=>{
+    const el_=now-t0;
+    ids.forEach(id=>{const tr=res.tracks[id];if(!durs[id])return;const p=Math.min(1,el_/durs[id]);const d=(tr.ped?p:ease(p))*tr.total;const ps=poseAt(tr,d);if(ps)placeActor(id,ps);});
+    if(el_>=maxD)finish();else anim.raf=requestAnimationFrame(frame);
+  };
+  anim={raf:requestAnimationFrame(frame)};
+}
+function onStepDone(step){
+  const lesson=LESSONS[L];
+  const last=K===lesson.steps.length-1;
+  if(last){doneSet.add(lesson.id);saveDone();renderRail();document.getElementById("nextcta").hidden=false;document.getElementById("bNextLesson").hidden=L===LESSONS.length-1;}
+  if(!playing)return;
+  if(last){setPlaying(false);return;}
+  const wait=(2200+step.say.length*30)/speed;
+  dwell=setTimeout(()=>{dwell=null;if(playing)goTo(K+1,true);},wait);
+}
+function renderCaption(lesson,step){
+  document.getElementById("stepn").textContent="Step "+(K+1)+" of "+lesson.steps.length;
+  document.getElementById("stitle").textContent=step.t;
+  document.getElementById("ssay").textContent=step.say;
+  document.querySelectorAll("#dots .dot").forEach((d,i)=>{d.className="dot"+(i<K?" past":i===K?" cur":"");});
+}
+function setPlaying(v){
+  playing=v;
+  document.getElementById("playTxt").textContent=v?"Pause":"Play";
+  document.getElementById("playIcon").innerHTML=v?'<path d="M3 2 H7 V14 H3 Z M9 2 H13 V14 H9 Z"/>':'<path d="M4 2 L13 8 L4 14 Z"/>';
+  if(!v){if(dwell){clearTimeout(dwell);dwell=null;}return;}
+  const lesson=LESSONS[L];
+  if(anim)return;
+  if(K>=lesson.steps.length-1)goTo(0,true);else goTo(K+1,true);
+}
+function renderRail(){
+  const rail=document.getElementById("rail");rail.innerHTML="";
+  const groups={};LESSONS.forEach((l,i)=>{(groups[l.group]=groups[l.group]||[]).push(i);});
+  for(const gname in groups){
+    const g=document.createElement("div");g.className="grp";
+    g.innerHTML=`<div class="gname">${gname}</div>`;
+    groups[gname].forEach(i=>{
+      const l=LESSONS[i];const b=document.createElement("button");
+      b.className="lesson"+(i===L?" active":"");
+      b.innerHTML=`<span class="n">${i+1}</span><span>${l.flag?`<span class="flag">${l.flag}</span>`:""}${l.title}</span>${doneSet.has(l.id)?'<span class="done" aria-label="watched">✓</span>':""}`;
+      b.onclick=()=>loadLesson(i,false);
+      g.appendChild(b);
+    });
+    rail.appendChild(g);
+  }
+  const sel=document.getElementById("lsel");
+  sel.innerHTML=LESSONS.map((l,i)=>`<option value="${i}">${i+1}. ${l.title}${doneSet.has(l.id)?" ✓":""}</option>`).join("");
+  sel.value=String(L);
+}
+document.getElementById("bPlay").onclick=()=>setPlaying(!playing);
+document.getElementById("bNext").onclick=()=>{setPlaying(false);if(K<LESSONS[L].steps.length-1)goTo(K+1,true);};
+document.getElementById("bPrev").onclick=()=>{setPlaying(false);if(K>0)goTo(K-1,true);};
+document.getElementById("bReplay").onclick=()=>{setPlaying(false);goTo(K,true);};
+document.getElementById("bNextLesson").onclick=()=>{if(L<LESSONS.length-1)loadLesson(L+1,true);};
+document.getElementById("bAgain").onclick=()=>{goTo(0,false);setPlaying(true);};
+document.getElementById("lsel").onchange=e=>loadLesson(parseInt(e.target.value,10),false);
+(function(){const wide=matchMedia("(min-width:761px)").matches;document.querySelectorAll("details.fold").forEach(d=>{d.open=wide;});
+ if("IntersectionObserver" in window){const bar=document.querySelector(".controls");new IntersectionObserver(es=>{bar.classList.toggle("away",!es[0].isIntersecting);},{rootMargin:"0px 0px -70px 0px"}).observe(document.querySelector(".stagebox"));}})();
+document.getElementById("speed").onchange=e=>{speed=parseFloat(e.target.value)||1;};
+document.addEventListener("keydown",e=>{
+  if(e.target.closest&&e.target.closest("input,select,textarea"))return;
+  if(e.key==="ArrowRight"){e.preventDefault();document.getElementById("bNext").click();}
+  else if(e.key==="ArrowLeft"){e.preventDefault();document.getElementById("bPrev").click();}
+  else if(e.key===" "&&!(e.target.closest&&e.target.closest("button"))){e.preventDefault();setPlaying(!playing);}
+});
+
+/* ---------- signs ---------- */
+const FD='font-family="Barlow Condensed,Arial Narrow,Arial,sans-serif" font-weight="700"';
+const T=(y,s,size,fill,x)=>`<text x="${x===undefined?50:x}" y="${y}" text-anchor="middle" font-size="${size}" fill="${fill||"#111"}" ${FD}>${s}</text>`;
+const W=inner=>`<rect x="12" y="4" width="76" height="92" rx="4" fill="#fff" stroke="#111" stroke-width="3"/>${inner}`;
+const DIA=(fill,inner)=>`<polygon points="50,3 97,50 50,97 3,50" fill="${fill}" stroke="#111" stroke-width="2"/>${inner}`;
+const PERSON=(x,y,s,col)=>`<circle cx="${x}" cy="${y}" r="${4*s}" fill="${col}"/><path d="M${x} ${y+5*s} v${14*s} M${x-7*s} ${y+9*s} h${14*s} M${x} ${y+19*s} l${-6*s} ${12*s} M${x} ${y+19*s} l${6*s} ${12*s}" stroke="${col}" stroke-width="${3*s}" fill="none" stroke-linecap="round"/>`;
+const SLASH='<circle cx="50" cy="50" r="34" fill="none" stroke="#c4302b" stroke-width="7"/><line x1="26" y1="26" x2="74" y2="74" stroke="#c4302b" stroke-width="7"/>';
+const SIGNS=[
+ ["Stop",`<polygon points="${octPts(50,50,46)}" fill="#c4302b" stroke="#fff" stroke-width="3"/>${T(60,"STOP",28,"#fff")}`,"Full stop at the line. Count 1-2-3. Go when clear. ALL-WAY plate = everyone stops."],
+ ["Yield",`<polygon points="4,10 96,10 50,92" fill="#c4302b"/><polygon points="16,17 84,17 50,74" fill="#fff"/>${T(44,"YIELD",16,"#c4302b")}`,"Slow down. Let traffic and pedestrians go first. Stop if needed."],
+ ["Railroad crossing (crossbuck)",`<line x1="50" y1="50" x2="50" y2="96" stroke="#666" stroke-width="5"/><g transform="translate(50 42)"><g transform="rotate(45)"><rect x="-46" y="-7" width="92" height="14" fill="#fff" stroke="#111" stroke-width="2"/><text y="4" text-anchor="middle" font-size="9" ${FD}>RAILROAD</text></g><g transform="rotate(-45)"><rect x="-46" y="-7" width="92" height="14" fill="#fff" stroke="#111" stroke-width="2"/><text y="4" text-anchor="middle" font-size="9" ${FD}>CROSSING</text></g></g>`,"Slow, look both ways, listen. Stop if a train is coming. Never stop on the tracks."],
+ ["Railroad ahead",`<circle cx="50" cy="50" r="46" fill="#f2c230" stroke="#111" stroke-width="2"/><path d="M24 24 L76 76 M76 24 L24 76" stroke="#111" stroke-width="7"/>${T(57,"R",18,"#111",22)}${T(57,"R",18,"#111",78)}`,"Crossing ahead. Slow down, look and listen. Be ready to stop 15 to 50 ft from the rail."],
+ ["School zone",`<polygon points="50,3 96,38 84,96 16,96 4,38" fill="#c6e62b" stroke="#111" stroke-width="2"/>${PERSON(40,30,1,"#111")}${PERSON(60,26,1.15,"#111")}`,"School ahead. 20 mph on school days when children are present. Watch for kids and guards."],
+ ["School speed limit",`${W(`<rect x="12" y="4" width="76" height="24" fill="#c6e62b"/>${T(22,"SCHOOL",14)}${T(42,"SPEED LIMIT",10)}${T(70,"20",28)}${T(88,"WHEN CHILDREN PRESENT",6)}`)}`,"20 mph. Not 21. School days 7 am to 4 pm with children present."],
+ ["Pedestrian crossing",DIA("#f2c230",PERSON(50,26,1.45,"#111")),"Crosswalk ahead. STOP for anyone crossing. Never pass a car stopped there."],
+ ["Speed limit",W(`${T(30,"SPEED",14)}${T(46,"LIMIT",14)}${T(84,"30",34)}`),"The maximum. Don't go over, even by 1. In town it's 30 unless posted."],
+ ["No turn on red",W(`${T(36,"NO",16)}${T(56,"TURN",16)}${T(76,"ON RED",16)}`),"Wait for green before turning right (or left from a one-way)."],
+ ["One way",`<rect x="4" y="30" width="92" height="40" fill="#111"/><path d="M12 50 L34 34 V44 H86 V56 H34 V66 Z" fill="#fff"/>${T(54,"ONE WAY",9,"#111",60)}`,"Traffic goes one direction only. Never turn against the arrow."],
+ ["Do not enter",`<rect x="4" y="4" width="92" height="92" rx="4" fill="#fff" stroke="#111" stroke-width="2"/><circle cx="50" cy="50" r="42" fill="#c4302b"/><rect x="18" y="43" width="64" height="14" fill="#fff"/>${T(34,"DO NOT",11,"#fff")}${T(78,"ENTER",11,"#fff")}`,"Don't go in. You'd be driving against traffic."],
+ ["Wrong way",`<rect x="4" y="30" width="92" height="40" fill="#c4302b"/>${T(48,"WRONG",15,"#fff")}${T(64,"WAY",15,"#fff")}`,"You're against traffic. Pull over and turn around safely."],
+ ["No left turn",W(`<path d="M62 72 V46 Q62 36 52 36 H40 M40 36 l10 -8 M40 36 l10 8" stroke="#111" stroke-width="6" fill="none"/>${SLASH}`),"Don't turn left here. Go straight or right."],
+ ["No U-turn",W(`<path d="M36 72 V44 a14 14 0 0 1 28 0 V62 M64 62 l-8 -8 M64 62 l8 -8" stroke="#111" stroke-width="6" fill="none"/>${SLASH}`),"No U-turn here. Use a turnabout or the next block."],
+ ["Keep right",W(`${T(30,"KEEP",14)}${T(48,"RIGHT",14)}<path d="M44 88 V70 Q44 60 54 60 H64 M64 60 l-7 -7 M64 60 l-7 7" stroke="#111" stroke-width="5" fill="none"/>`),"Stay to the right of the island or divider."],
+ ["Merge",DIA("#f2c230",`<path d="M50 86 V40 M50 60 Q50 44 36 36 L28 30" stroke="#111" stroke-width="6" fill="none"/><path d="M50 18 l-8 14 h16 z" fill="#111"/>`),"Traffic joins from the side. Adjust speed, let them in."],
+ ["Lane ends",DIA("#f2c230",`${T(44,"LANE",12)}${T(58,"ENDS",12)}${T(72,"MERGE LEFT",8)}`),"Your lane is ending. Signal and merge early."],
+ ["Signal ahead",DIA("#f2c230",`<rect x="42" y="24" width="16" height="44" rx="3" fill="#111"/><circle cx="50" cy="33" r="5" fill="#ff3b30"/><circle cx="50" cy="46" r="5" fill="#ffcc00"/><circle cx="50" cy="59" r="5" fill="#2fd158"/>`),"Traffic light ahead. Slow down, be ready to stop."],
+ ["Stop ahead",DIA("#f2c230",`<polygon points="${octPts(50,40,15)}" fill="#c4302b"/><path d="M50 62 V82 M44 76 l6 8 l6 -8" stroke="#111" stroke-width="5" fill="none"/>`),"Stop sign ahead. Slow down now."],
+ ["Divided highway",DIA("#f2c230",`<ellipse cx="50" cy="56" rx="8" ry="18" fill="#111"/><path d="M36 78 V36 M64 78 V36" stroke="#111" stroke-width="6"/><path d="M36 26 l-7 11 h14 z M64 26 l-7 11 h14 z" fill="#111"/>`),"The road splits around a median. Keep right."],
+ ["Two-way traffic",DIA("#f2c230",`<path d="M40 76 V32 M60 24 V68" stroke="#111" stroke-width="6"/><path d="M40 22 l-7 11 h14 z M60 78 l-7 -11 h14 z" fill="#111"/>`),"Oncoming traffic ahead. Stay right of the yellow line."],
+ ["Road work",DIA("#f28a1a",`${T(40,"ROAD",12)}${T(54,"WORK",12)}${T(68,"AHEAD",12)}`),"Construction zone. Slow down, follow the flaggers. Fines double."],
+ ["Slippery when wet",DIA("#f2c230",`${T(40,"SLIPPERY",10)}${T(54,"WHEN",10)}${T(68,"WET",10)}`),"Slow down. No sudden braking or steering."],
+ ["Left turn yield on green",W(`${T(26,"LEFT TURN",11)}${T(44,"YIELD",14)}${T(60,"ON GREEN",11)}<circle cx="50" cy="76" r="9" fill="#2fd158" stroke="#111"/>`),"Plain green ball: oncoming traffic goes first before you turn left."],
+ ["Center turn lane",W(`${T(26,"CENTER",11)}${T(40,"LANE",11)}<path d="M28 60 H18 M18 60 l6 -5 M18 60 l6 5 M72 60 H82 M82 60 l-6 -5 M82 60 l-6 5" stroke="#111" stroke-width="4" fill="none"/>${T(84,"ONLY",11)}`),"Middle lane is for left turns only, both directions. Don't drive in it."],
+ ["Crossing guard STOP",`<line x1="50" y1="62" x2="50" y2="96" stroke="#666" stroke-width="5"/><polygon points="${octPts(50,36,32)}" fill="#c4302b" stroke="#fff" stroke-width="2"/>${T(43,"STOP",18,"#fff")}`,"A guard's hand-held STOP is a legal stop sign. Stop and wait until waved on."],
+ ["School bus stop arm",`<rect x="34" y="8" width="40" height="84" rx="6" fill="#f2c230" stroke="#111"/><rect x="40" y="16" width="28" height="10" fill="#bfd5ea"/><rect x="34" y="50" width="40" height="4" fill="#111"/><circle cx="40" cy="12" r="4" fill="#ff3b30"/><circle cx="68" cy="12" r="4" fill="#ff3b30"/><line x1="34" y1="40" x2="14" y2="40" stroke="#111" stroke-width="3"/><polygon points="${octPts(12,40,10)}" fill="#c4302b"/>`,"Red flashers + arm out: STOP. Both directions on a two-lane road. Never pass."],
+ ["No parking",W(`${T(80,"NO PARKING",11)}<text x="50" y="60" text-anchor="middle" font-size="34" ${FD}>P</text><circle cx="50" cy="48" r="28" fill="none" stroke="#c4302b" stroke-width="6"/><line x1="30" y1="28" x2="70" y2="68" stroke="#c4302b" stroke-width="6"/>`),"Don't stop here, even for a minute. Fire hydrant 15 ft, crosswalk 20 ft, stop sign 30 ft."]
+];
+document.getElementById("signs").innerHTML=SIGNS.map(([n,svg,d])=>`<div class="sign"><svg viewBox="0 0 100 100" aria-hidden="true">${svg}</svg><b>${n}</b><span>${d}</span></div>`).join("");
+
+/* ---------- light reference ---------- */
+const REF=[
+ [{ball:"r"},"<b>Solid red:</b> full stop at the line. Right turn allowed after stopping, unless a sign says no."],
+ [{ball:"r",bf:true},"<b>Flashing red:</b> same as a STOP sign."],
+ [{ball:"y"},"<b>Solid yellow:</b> about to turn red. Stop if you safely can."],
+ [{ball:"y",bf:true},"<b>Flashing yellow:</b> slow down, go with caution."],
+ [{ball:"g"},"<b>Solid green:</b> go if clear. Left turns yield to oncoming traffic; all turns yield to pedestrians."],
+ [{arrow:"g"},"<b>Green arrow:</b> protected turn in that direction."],
+ [{arrow:"y"},"<b>Yellow arrow:</b> protected turn ending. Stop if you safely can."],
+ [{arrow:"y",af:true},"<b>Flashing yellow arrow:</b> turn allowed after yielding to oncoming traffic and pedestrians."],
+ [{arrow:"r"},"<b>Red arrow:</b> no turning in that direction. Wait."],
+ [{},"<b>Light dark / not working:</b> treat as an all-way stop."]
+];
+document.getElementById("lightref").innerHTML=REF.map(([o,t])=>{
+  let lamp;
+  if(o.arrow)lamp=`<div class="lamp arrow a${o.arrow}${o.af?" flash":""}" style="background:#16191c">${ARROW_SVG}</div>`;
+  else if(o.ball)lamp=`<div class="lamp ${{r:"red",y:"yellow",g:"green"}[o.ball]} on${o.bf?" flash":""}"></div>`;
+  else lamp=`<div class="lamp"></div>`;
+  return `<div class="lightrow">${lamp}<div>${t}</div></div>`;
+}).join("");
+
+/* ---------- checklist ---------- */
+const CHECK=[
+ ["Before you move","Seat, mirrors, seatbelt. Parking brake off. Know where lights, wipers, hazards, horn and defroster are."],
+ ["Every stop","Complete stop behind the line. Count 1-2-3. No rolling."],
+ ["Every turn","Mirror, signal 100 ft before, blind spot, slow down, turn into the nearest lane, signal off."],
+ ["Every driveway or parking lot exit","Stop before the sidewalk. Creep. LEFT, RIGHT, LEFT. Go only when the lane you enter is empty."],
+ ["Left turns","Oncoming traffic first. Wheels straight while waiting. Crosswalk clear."],
+ ["Right on red","Full stop, look for NO TURN ON RED, crosswalk clear, traffic from the left clear."],
+ ["Lane changes","Mirror, signal, look over your shoulder, then move."],
+ ["Backing up (about 50 ft)","Look over your right shoulder through the rear window. Slow and straight."],
+ ["Turnabout","Signal, stop past the driveway, shoulder check, back in slowly, stop before the sidewalk on the way out."],
+ ["School bus, railroad, crosswalk","Red flashers: stop. Gate down: stop 15 to 50 ft back. Person in crosswalk: stop."],
+ ["Following distance","At least 3 seconds behind the car ahead."],
+ ["Speed","20 mph school zones with kids present. 30 in town unless posted. Never over."],
+ ["Bring","Permit, required documents, proof of insurance. Car with working lights, signals, horn and brake lights."]
+];
+let checks={};try{checks=JSON.parse(localStorage.getItem("ilturns-check")||"{}");}catch(e){}
+document.getElementById("checklist").innerHTML=CHECK.map(([h,t],i)=>`<label class="check" for="ck${i}"><input type="checkbox" id="ck${i}" ${checks[i]?"checked":""}><span><b>${h}</b>${t}</span></label>`).join("");
+document.querySelectorAll("#checklist input").forEach((c,i)=>c.onchange=()=>{checks[i]=c.checked;try{localStorage.setItem("ilturns-check",JSON.stringify(checks));}catch(e){}});
+
+loadLesson(0,false);
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(lastMarks)drawMarks(lastMarks[0],lastMarks[1]);});
+})();
+</script>
+
+</body>
+</html>
