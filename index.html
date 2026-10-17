@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Animated step-by-step practice for the Illinois road test: turns, lights, signs, school buses, railroad crossings, parking and more.">
+<meta name="description" content="Animated step-by-step practice for the Illinois road test: turns, lights, signs, school buses, railroad crossings, parking, and the mistakes that fail people.">
 <title>Illinois Road Test Prep</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -128,6 +128,13 @@ section.block > p{margin:0;color:var(--muted);max-width:70ch}
 .sign svg{width:76px;height:76px}
 .sign b{font-size:15px;line-height:1.2}
 .sign span{font-size:13.5px;color:var(--muted);line-height:1.3}
+.fails{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr));gap:14px}
+.failcol{display:grid;gap:8px;align-content:start}
+.fail{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:10px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-width:0}
+.fail .fn{font-family:var(--font-display);font-weight:700;font-size:22px;color:var(--stop);line-height:1}
+.fail.rare .fn{color:var(--yield)}
+.fail b{display:block}.fail span{font-size:14px;color:var(--muted)}
+.fail .btn{padding:6px 10px;font-size:13px;white-space:nowrap}
 .cheat{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,270px),1fr));gap:12px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;display:grid;gap:8px;align-content:start;min-width:0}
 .card ul,.card ol{margin:0;padding-left:20px;display:grid;gap:5px}
@@ -201,6 +208,7 @@ footer a{color:var(--info)}
   section.block{margin-top:26px;gap:8px}
   h2{font-size:24px}
   .signs{grid-template-columns:repeat(auto-fill,minmax(min(100%,150px),1fr));gap:8px}
+  .fail{grid-template-columns:24px minmax(0,1fr)}.fail .btn{grid-column:2;justify-self:start}
   .sign svg{width:64px;height:64px}
 }
 </style>
@@ -272,6 +280,13 @@ footer a{color:var(--info)}
   </div>
 
   <section class="block">
+    <div class="eyebrow">Research</div>
+    <h2>Why people actually fail</h2>
+    <p>From the Illinois scoring rule, driving-school reports and drivers' own stories. Tap a lesson to practice it.</p>
+    <div class="fails" id="fails"></div>
+  </section>
+
+  <section class="block">
     <div class="eyebrow">The test itself</div>
     <h2>What the Illinois examiner grades</h2>
     <div class="cheat">
@@ -289,7 +304,7 @@ footer a{color:var(--info)}
           <li><b>Straight backing</b> about 50 ft, slowly, looking over your right shoulder (not mirrors alone).</li>
           <li><b>Turnabout</b> using an alley on your LEFT: left signal before entering, back out, stay on your side.</li>
           <li><b>Uphill and downhill parking</b> at the curb, and <b>hill starts</b> (where the site has a hill).</li>
-          <li>Parallel parking is not a standard part of the Illinois test, but lesson 38 covers it in case your site asks.</li>
+          <li>Parallel parking is not a standard part of the Illinois test, but the Parallel parking lesson covers it in case your site asks.</li>
         </ul>
       </div>
       <div class="card">
@@ -574,18 +589,18 @@ const LESSONS_SRC=[
 },
 {
  id:"green-left", group:"Traffic lights", title:"Left turn at a green light (no arrow)", map:"cross", mapOpts:{light:true},
- rules:["Use the lane next to the yellow center line.","On a plain green, oncoming traffic goes first.","You may pull forward into the intersection to wait. Keep your wheels STRAIGHT.","Yield to people in the crosswalk you turn across.","If the light changes while you're in the intersection, finish the turn once oncoming cars stop. Never back up."],
+ rules:["Use the lane next to the yellow center line.","On a plain green, oncoming traffic goes first.","Waiting inside the intersection is legal, but an Illinois examiner has failed a driver for it. Safest on the test: wait behind the line. If you do enter, keep your wheels STRAIGHT.","Yield to people in the crosswalk you turn across.","If the light changes while you're in the intersection, finish the turn once oncoming cars stop. Never back up."],
  tip:"Pull in, wheels straight. Oncoming first. Crosswalk clear. Then turn.",
  steps:[
   {t:"Green light, turning LEFT",say:"Lane next to the yellow line.",act:"SLOW",light:"g",signal:null,actors:{me:[325,580,0]}},
   {t:"Signal at least 100 feet before",say:"Mirror, signal, slow down.",act:"SLOW",signal:"left",actors:{me:[325,490,0]}},
-  {t:"Pull into the intersection and wait, wheels straight",say:"Wheels STRAIGHT, so a rear hit can't push you into oncoming cars.",act:"YIELD",actors:{me:L_WAIT,c1:{from:[275,-60,180],to:[275,110,180]}},marks:[{k:"label",x:362,y:338,text:"Wait here\nwheels STRAIGHT",tone:"info",anchor:"start"},{k:"zone",x:252,y:0,w:46,h:250,tone:"yield"}]},
+  {t:"Wait for a gap. Safest on the test: behind the line",say:"Pulling in to wait is legal, but some Illinois examiners mark it. If you do enter, wheels STRAIGHT.",act:"YIELD",actors:{me:STOPLINE,c1:{from:[275,-60,180],to:[275,110,180]}},marks:[{k:"label",x:362,y:420,text:"Wait here\nbehind the line",tone:"info",anchor:"start"},{k:"zone",x:252,y:0,w:46,h:250,tone:"yield"}]},
   {t:"Oncoming traffic goes first",say:"Straight or turning right, they go first.",act:"WAIT",actors:{c1:[275,660,180]}},
   {t:"Check the crosswalk you'll turn across",say:"They have WALK. They go first.",act:"YIELD",actors:{c1:null,p1:{from:[235,236],to:[235,296]}},marks:[{k:"zone",x:224,y:250,w:22,h:100,tone:"yield"}]},
   {t:"Wait until they're clear",say:"Wait until they reach the curb.",act:"WAIT",actors:{p1:[235,364]}},
   {t:"Gap is clear: turn LEFT",say:"Into the nearest lane going your way. Don't cut the corner.",act:"GO",actors:{me:L_END,p1:null}},
   {t:"Straighten out, signal off",say:"Speed up. Signal off.",act:"GO",signal:null,actors:{me:L_OFF}},
-  {t:"Light turns yellow while you wait?",say:"Already in the intersection? Finish once oncoming cars stop. Never back up.",act:"GO",light:"y",signal:"left",actors:{me:{at:L_WAIT},c1:{at:[275,194,180]}},marks:[{k:"label",x:362,y:338,text:"You're already in.\nFinish the turn.",tone:"go",anchor:"start"}]},
+  {t:"If you DID enter and the light turns yellow",say:"Finish the turn once oncoming cars stop. Never back up.",act:"GO",light:"y",signal:"left",actors:{me:{at:L_WAIT},c1:{at:[275,194,180]}},marks:[{k:"label",x:362,y:338,text:"You're already in.\nFinish the turn.",tone:"go",anchor:"start"}]},
   {t:"Oncoming stopped: complete the turn",say:"Clear the intersection.",act:"GO",light:"r",signal:null,actors:{me:[L_END,L_OFF]}}
  ]
 },
@@ -708,7 +723,7 @@ const LESSONS_SRC=[
 {
  id:"ped", group:"School and people", title:"Pedestrian crosswalk (no light)", map:"straight", mapOpts:{crosswalk:true,pedSign:true},
  control:"No light. Illinois law: STOP for a person in a crosswalk.",
- rules:["Illinois law: you must STOP for people in a crosswalk, not just slow down.","Stop before the stop line or crosswalk.","Wait until they're across, or clearly past your path.","Never pass a car that's stopped at a crosswalk. Someone is crossing."],
+ rules:["Illinois law: you must STOP for people in a crosswalk, not just slow down.","Stop before the stop line or crosswalk.","Wait until they're across, or clearly past your path.","Never pass a car that's stopped at a crosswalk. Someone is crossing.","Light turns green but people are still in the crosswalk? Wait for them."],
  tip:"Person in the crosswalk: STOP. Never pass a stopped car there.",
  steps:[
   {t:"Crosswalk ahead, person waiting at the curb",say:"Yellow sign: crosswalk ahead. Slow down.",act:"SLOW",light:"none",signal:null,actors:{me:[[325,620,0],[325,450,0]],p1:{at:[388,300]}}},
@@ -824,7 +839,7 @@ const MORE=[
 {
  id:"precheck", group:"Start here", title:"Start of the test: checks, then back out of the space", map:"drive", mapOpts:{},
  control:"No light. Everything set before the car moves.",
- rules:["Seat, mirrors, seatbelt before anything else. Both of you buckled.","The examiner may ask you to show: horn, headlights, turn signals, brake lights, hazards, wipers, defroster, parking brake.","Phone off and away.","Backing out: look over your shoulder, walking speed, stop for anyone walking.","End of the test: pull into a space straight, shift to P, parking brake on."],
+ rules:["Seat, mirrors, seatbelt before anything else. Both of you buckled.","The examiner may ask you to show: horn, headlights, turn signals, brake lights, hazards, wipers, defroster, parking brake.","Phone off and away.","Car check: brake lights, horn, wipers, no dashboard warning lights, no windshield cracks, clean windows. In extreme heat the AC must work or they may refuse the test.","Documents: permit, insurance card, registration. A missing insurance card = no test that day.","Backing out: look over your shoulder, walking speed, stop for anyone walking.","End of the test: pull into a space straight, shift to P, parking brake on."],
  tip:"Seat, mirrors, belt. Show the controls. Shoulder check, back out slowly.",
  steps:[
   {t:"Seat, mirrors, seatbelt",say:"Set everything before the car moves. Both of you buckled.",act:"STOP",light:"none",signal:null,actors:{me:{at:[246,540,180]}}},
@@ -882,7 +897,7 @@ const MORE=[
 },
 {
  id:"yellow", group:"Traffic lights", title:"Light turns yellow as you approach", map:"cross", mapOpts:{light:true},
- rules:["Yellow means red is coming. Stop if you can stop safely.","Far from the line: stop. Never speed up to beat it.","Too close to stop safely: continue through at the same speed.","Red before you reach the line: you must stop. Entering on red = fail."],
+ rules:["Yellow means red is coming. Stop if you can stop safely.","Far from the line: stop. Never speed up to beat it.","Too close to stop safely: continue through at the same speed.","Red before you reach the line: you must stop. Entering on red = fail.","Entering on a late yellow and getting caught inside when it turns red = fail. Don't gamble."],
  tip:"Yellow far away: stop. Yellow at the line: continue. Never speed up.",
  steps:[
   {t:"Green light, you're approaching",say:"Keep watching the light.",act:"GO",light:"g",signal:null,actors:{me:[[325,640,0],[325,560,0]]}},
@@ -938,7 +953,7 @@ const MORE=[
 {
  id:"lane4", group:"Lanes and speed", title:"Lane change on a 4-lane street", map:"straight", mapOpts:{four:true},
  control:"No light. Two lanes each way. Never cross the yellow line to change lanes.",
- rules:["Mirror, signal, shoulder check, move smoothly, signal off.","One lane at a time.","Keep your speed while moving over.","Never cross the yellow line. The lanes on the other side are oncoming."],
+ rules:["Mirror, signal, shoulder check, move smoothly, signal off.","One lane at a time.","Keep your speed while moving over.","Never cross the yellow line. The lanes on the other side are oncoming.","Never change lanes inside an intersection. Wait until you're through."],
  tip:"Mirror, signal, shoulder, move. One lane at a time.",
  steps:[
   {t:"Examiner: move to the left lane",say:"Rear-view mirror, then left mirror.",act:"LOOK",light:"none",signal:null,actors:{me:[[375,640,0],[375,500,0]],c3:{from:[275,-60,180],to:[275,660,180]}}},
@@ -1078,8 +1093,78 @@ const MORE2=[
  ]
 }
 ];
-const ORDER=["lot-right","lot-left","precheck","drive-back","lot-in-right","lot-in-left","green-right","red-right","green-left","arrows","oneway-left","flash","yellow","allway","twoway","stop-queue","tee","yieldsign","uncontrolled","roundabout","lane4","lane","speed","bike","curb","ylines","uturn","school","ped","bus2","busdiv","rail","emerg","talley","turnabout","back","hill","parallel"];
-const ALL=LESSONS_SRC.concat(MORE,MORE2);
+
+const MORE3=[
+{
+ id:"wideturn", group:"Common fails", title:"Wide turns, cut corners and curbs", map:"cross", mapOpts:{stops:["S"]},
+ control:"STOP sign for you. The shape of the turn is what's graded here.",
+ rules:["Right turn: start turning when your front bumper passes the curb line, not before. Too early = rear wheel climbs the curb.","Right turn: end in the near lane, close to the curb. Swinging into the far lane is a wrong-lane error.","Left turn: go around the center of the intersection into the nearest lane going your way. Cutting the corner puts you in the oncoming lane.","Touching a curb lightly: points. Hitting it hard or climbing it: fail.","Right lane blocked by parked cars? Turn into it anyway, then signal and move left."],
+ tip:"Right: late and tight. Left: wide around the center. Never climb the curb.",
+ steps:[
+  {t:"Full stop first",say:"Signal right. Count 1-2-3.",act:"STOP",light:"none",signal:"right",actors:{me:[[325,600,0],STOPLINE]},marks:[{k:"bar",x:298,y:378,w:54,h:6,tone:"stop"}]},
+  {t:"WRONG: turning right too early",say:"The rear wheel rides up the curb. Hitting a curb hard is a fail.",act:"SLOW",actors:{me:{to:[440,325,90],c:[330,380]}},marks:[{k:"zone",x:348,y:348,w:24,h:24,tone:"stop"},{k:"label",x:420,y:420,text:"Rear wheel\non the curb",tone:"stop",anchor:"middle"}]},
+  {t:"WRONG: swinging wide into the far lane",say:"Wrong lane. Oncoming traffic lives there.",act:"SLOW",actors:{me:[{at:STOPLINE},{to:[440,275,90],c:[325,275]}]},marks:[{k:"zone",x:370,y:252,w:230,h:46,tone:"stop"},{k:"label",x:480,y:212,text:"Far lane = WRONG",tone:"stop",anchor:"middle"}]},
+  {t:"RIGHT: start when your bumper passes the curb line, end in the near lane",say:"Tight, slow (10 to 15 mph), close to the curb.",act:"GO",actors:{me:[{at:STOPLINE},R_END]},marks:[{k:"zone",x:370,y:302,w:230,h:46,tone:"go"}]},
+  {t:"WRONG: cutting the left corner",say:"You drive through the oncoming lane.",act:"SLOW",signal:"left",actors:{me:[{at:STOPLINE},{to:L_END,c:[290,350]}]},marks:[{k:"zone",x:252,y:300,w:46,h:60,tone:"stop"},{k:"label",x:200,y:420,text:"Cut corner = WRONG",tone:"stop",anchor:"middle"}]},
+  {t:"RIGHT: around the center, into the nearest lane going your way",say:"Stay right of the center point of the intersection.",act:"GO",signal:null,actors:{me:[{at:STOPLINE},L_END,L_OFF]},marks:[{k:"zone",x:0,y:252,w:230,h:46,tone:"go"}]}
+ ]
+},
+{
+ id:"overshoot", group:"Common fails", title:"Stopped past the line? Never back up", map:"cross", mapOpts:{stops:["S"]},
+ control:"STOP sign for you. Backing up at an intersection is an automatic fail.",
+ rules:["Stop with the white line still visible over your hood.","Crept past the line: that's points, not a fail. Stay where you are.","NEVER back up at an intersection or in traffic. That is an automatic fail.","Brake earlier next time: slow down well before the sign."],
+ tip:"Line over the hood. Past it? Stay put. Never reverse.",
+ steps:[
+  {t:"You brake late and stop past the line",say:"Points lost, but not a fail.",act:"STOP",light:"none",signal:null,actors:{me:[[325,600,0],[325,372,0]]},marks:[{k:"bar",x:298,y:378,w:54,h:6,tone:"stop"},{k:"label",x:362,y:420,text:"Past the line",tone:"yield",anchor:"start"}]},
+  {t:"Do NOT back up",say:"Backing at an intersection is an automatic fail. Stay.",act:"WAIT",marks:[{k:"label",x:362,y:420,text:"Never reverse here",tone:"stop",anchor:"start"}]},
+  {t:"Look left-right-left, go when clear",say:"Treat it as your stop. Yield to everything.",act:"YIELD",actors:{c1:{from:[-60,325,90],to:[660,325,90]}},marks:NEAR},
+  {t:"Clear: go",say:"Smooth.",act:"GO",actors:{c1:null,me:[325,-60,0]}},
+  {t:"Next time: brake early, line visible over the hood",say:"Slow down well before the sign.",act:"STOP",actors:{me:[{at:[325,600,0]},STOPLINE]},marks:[{k:"bar",x:298,y:378,w:54,h:6,tone:"go"},{k:"label",x:362,y:420,text:"Line over the hood",tone:"go",anchor:"start"}]}
+ ]
+},
+{
+ id:"blockbox", group:"Common fails", title:"Don't block the intersection", map:"cross", mapOpts:{light:true},
+ rules:["Green doesn't mean go if there's no room on the other side.","Enter only when you can clear the whole intersection, crosswalk included.","Getting stuck inside when the light changes = blocking the box = fail.","Same at railroad crossings and driveways: leave the gap."],
+ tip:"Green, but no room ahead? Wait behind the crosswalk.",
+ steps:[
+  {t:"Green light, but traffic is backed up on the other side",say:"No room to clear the intersection.",act:"SLOW",light:"g",signal:null,actors:{c1:{at:[325,200,0]},c2:{at:[325,150,0]},c3:{at:[325,100,0]},me:[[325,620,0],[325,470,0]]},marks:[{k:"zone",x:302,y:250,w:46,h:100,tone:"stop"},{k:"label",x:362,y:300,text:"No room\nto clear",tone:"stop",anchor:"start"}]},
+  {t:"STOP before the crosswalk, even on green",say:"Wait until there's room for your whole car past the far crosswalk.",act:"STOP",actors:{me:STOPLINE},marks:[{k:"bar",x:298,y:378,w:54,h:6,tone:"stop"}]},
+  {t:"Light turns red. Cross traffic goes",say:"If you'd entered, you'd be sitting in their path. Automatic fail.",act:"WAIT",light:"r",actors:{c4:{from:[-60,325,90],to:[660,325,90]}}},
+  {t:"Green again, traffic ahead moves on",say:"Now there's room.",act:"WAIT",light:"g",actors:{c4:null,c3:[325,-160,0],c2:[325,-110,0],c1:[325,-60,0]}},
+  {t:"Room to clear: go",say:"Through in one move.",act:"GO",actors:{c1:null,c2:null,c3:null,me:[325,-60,0]}}
+ ]
+},
+{
+ id:"instr", group:"Common fails", title:"Examiner says 'turn here' but a sign says no", map:"oneway", mapOpts:{light:true},
+ control:"ONE WAY cross street going left. A right turn here would be the wrong way.",
+ rules:["The law beats the instruction. Examiners sometimes test this.","Say it: 'That's a one-way street, I'll take the next one.' Then keep driving safely.","Same for NO LEFT TURN, NO TURN ON RED, DO NOT ENTER.","Didn't hear the instruction? Ask them to repeat it. Guessing is worse.","Turned left when told right? Not a fail by itself. Stay calm, drive safely, follow the next instruction."],
+ tip:"Sign beats examiner. Say it out loud. Ask if unsure.",
+ steps:[
+  {t:"Examiner: 'Turn right at the next street'",say:"Mirror, signal right.",act:"SLOW",light:"g",signal:"right",actors:{me:[[325,640,0],[325,500,0]]}},
+  {t:"ONE WAY sign: that street goes LEFT only",say:"A right turn here would be wrong-way driving. Automatic fail.",act:"LOOK",actors:{me:[325,440,0]},marks:[{k:"label",x:400,y:500,text:"ONE WAY ◀\nright turn = wrong way",tone:"stop",anchor:"start"},{k:"zone",x:350,y:302,w:250,h:46,tone:"stop"}]},
+  {t:"Say it: 'That's a one-way, I'll take the next one.' Cancel the signal, go straight",say:"Examiners sometimes test exactly this.",act:"GO",signal:null,actors:{me:[325,-60,0]}},
+  {t:"Same with NO LEFT TURN, NO TURN ON RED, DO NOT ENTER",say:"Read every sign at the corner before you follow an instruction.",act:"LOOK",actors:{me:{at:[325,500,0]}},marks:[{k:"sign",type:"ntor",x:395,y:430}]},
+  {t:"Didn't hear? Ask. Took the wrong turn? Keep driving safely",say:"A wrong turn isn't a fail. Panicking into a bad move is.",act:"GO",actors:{me:[325,-60,0]}}
+ ]
+},
+{
+ id:"habits", group:"Common fails", title:"What the examiner watches the whole time", map:"straight", mapOpts:{four:true},
+ control:"No light. These habits are scored on every block.",
+ rules:["Mirrors every 5 to 8 seconds, with a visible head movement.","Both hands on the wheel, 9 and 3. Hand-over-hand on turns. No one-handed driving.","Look far ahead. Check cross streets left-right-left even on green.","Drive AT the limit when it's safe. Too slow and hesitant costs points too.","Brake early and smoothly. Ease off at the end so the car doesn't jerk.","Backup camera: not as your main view. Turn and look.","Didn't hear the instruction? Ask. No phone, no radio."],
+ tip:"Mirrors, hands, eyes far ahead, at the limit, smooth brakes.",
+ steps:[
+  {t:"Mirrors every 5 to 8 seconds",say:"Move your head so the examiner sees you check.",act:"LOOK",light:"none",signal:null,actors:{me:[[375,660,0],[375,560,0]],c1:{at:[325,420,0]},c3:{from:[275,-60,180],to:[275,660,180]}}},
+  {t:"Both hands on the wheel, 9 and 3",say:"Hand-over-hand on turns. Never one-handed.",act:"GO",actors:{me:[375,470,0]}},
+  {t:"Eyes far ahead, scan every cross street left-right-left",say:"Even with a green light.",act:"LOOK",actors:{me:[375,380,0]}},
+  {t:"Keep up: drive AT the limit when safe",say:"Hesitating and crawling costs points too.",act:"GO",actors:{me:[375,280,0]}},
+  {t:"Brake early and smoothly",say:"Ease off at the end so nobody's head bobs.",act:"SLOW",actors:{c1:[325,-60,0],me:[375,180,0]}},
+  {t:"Backing: turn and look, not just the camera",say:"The camera is extra, not the main view.",act:"LOOK"},
+  {t:"Calm and clear",say:"Didn't hear? 'Could you repeat that?' Better than guessing.",act:"GO",actors:{me:[375,-60,0]}}
+ ]
+}
+];
+const ORDER=["lot-right","lot-left","precheck","drive-back","lot-in-right","lot-in-left","wideturn","overshoot","blockbox","instr","habits","green-right","red-right","green-left","arrows","oneway-left","flash","yellow","allway","twoway","stop-queue","tee","yieldsign","uncontrolled","roundabout","lane4","lane","speed","bike","curb","ylines","uturn","school","ped","bus2","busdiv","rail","emerg","talley","turnabout","back","hill","parallel"];
+const ALL=LESSONS_SRC.concat(MORE,MORE2,MORE3);
 const LESSONS=ORDER.map(id=>ALL.find(l=>l.id===id));
 const GROUP_OF={allway:"Stop and yield signs",twoway:"Stop and yield signs",uncontrolled:"Stop and yield signs",lane:"Lanes and speed",rail:"Railroad",emerg:"Emergency vehicles"};
 LESSONS.forEach(l=>{if(GROUP_OF[l.id])l.group=GROUP_OF[l.id];});
@@ -1662,6 +1747,45 @@ const SIGNS=[
  ["No parking",W(`${T(80,"NO PARKING",11)}<text x="50" y="60" text-anchor="middle" font-size="34" ${FD}>P</text><circle cx="50" cy="48" r="28" fill="none" stroke="#c4302b" stroke-width="6"/><line x1="30" y1="28" x2="70" y2="68" stroke="#c4302b" stroke-width="6"/>`),"Don't stop here, even for a minute. Fire hydrant 15 ft, crosswalk 20 ft, stop sign 30 ft."]
 ];
 document.getElementById("signs").innerHTML=SIGNS.map(([n,svg,d])=>`<div class="sign"><svg viewBox="0 0 100 100" aria-hidden="true">${svg}</svg><b>${n}</b><span>${d}</span></div>`).join("");
+
+/* ---------- why people fail ---------- */
+const FAILS_COMMON=[
+ ["Rolling stop","Tires never fully stop at a stop sign, red light or right on red. The number one fail in Illinois.","stop-queue"],
+ ["Failing to yield","Leaving a driveway, turning left on green, pedestrians in a crosswalk. If someone has to brake for you, it's a fail.","lot-right"],
+ ["No signal, or too late","Signal 100 ft before every turn and lane change, and when leaving the curb.","curb"],
+ ["No shoulder check","Mirrors alone aren't enough. The examiner wants to see your head turn.","lane4"],
+ ["Speed","Over the limit by even 1 or 2, or crawling far under it. Turns at 10 to 15 mph.","speed"],
+ ["Stopping past the line","Creeping while slowing. Keep the line visible over the hood.","overshoot"],
+ ["Wide right turns, cut left corners","Ending in the wrong lane, or driving through the oncoming lane.","wideturn"],
+ ["Hitting a curb","Right turns started too early, backing, parking. Hard hit or climbing it = fail.","wideturn"],
+ ["Following too closely","Less than 3 seconds behind the car ahead.","speed"],
+ ["Backing without looking back","Camera or mirrors only. Turn and look over your right shoulder.","back"],
+ ["Turnabout mistakes","Too many moves, rolling back, into the far lane, no left signal.","talley"],
+ ["Car fails the check","Brake light out, warning light on, cracked windshield, missing insurance card.","precheck"]
+];
+const FAILS_RARE=[
+ ["Waiting inside the intersection for a left turn","Legal, but an Illinois examiner failed a driver for it. Safest: wait behind the line.","green-left"],
+ ["Entering on a late yellow","Caught inside when it turns red. Treat a stale yellow like a red.","yellow"],
+ ["Blocking the box","Entering on green with no room to clear, then stuck when the light changes.","blockbox"],
+ ["Backing up after overshooting a stop line","Automatic fail. Stay put and go when clear.","overshoot"],
+ ["Following the examiner into a one-way street","The sign wins. Say it out loud and take the next street.","instr"],
+ ["Changing lanes inside an intersection","Even when it's empty. Wait until you're through.","lane4"],
+ ["Slowing instead of stopping for an emergency vehicle","Pull right and STOP. Slowing down is not enough.","emerg"],
+ ["Passing a stopped school bus","Red flashers and arm. Instant fail and a license suspension.","bus2"],
+ ["Too cautious","Crawling under the limit, long hesitation at a 4-way stop. Costs points too.","habits"],
+ ["One-handed steering","Hands sliding, palming the wheel. Both hands, hand-over-hand.","habits"],
+ ["Hill: parking brake forgotten, no signal pulling out","Small things the sheet has a line for.","hill"],
+ ["Pedestrians still crossing when the light turns green","Wait for them. Green doesn't override people.","school"],
+ ["Driving around a railroad gate","Illegal and an instant fail. Wait it out.","rail"],
+ ["Car turned away at the start","No AC in extreme heat, dirty windshield, expired sticker. Check the car the night before.","precheck"]
+];
+function renderFails(){
+  const col=(title,list,cls)=>`<div class="failcol"><h3>${title}</h3>${list.map(([t,d,id],i)=>`<div class="fail ${cls}"><div class="fn">${i+1}</div><div><b>${t}</b><span>${d}</span></div><button class="btn" data-l="${id}">Lesson ${LESSONS.findIndex(l=>l.id===id)+1}</button></div>`).join("")}</div>`;
+  const box=document.getElementById("fails");
+  box.innerHTML=col("Most common",FAILS_COMMON,"")+col("Less common and surprising",FAILS_RARE,"rare");
+  box.querySelectorAll("button[data-l]").forEach(b=>b.onclick=()=>{loadLesson(LESSONS.findIndex(l=>l.id===b.dataset.l),true);document.querySelector(".stagebox").scrollIntoView({behavior:"smooth",block:"start"});});
+}
+renderFails();
 
 /* ---------- light reference ---------- */
 const REF=[
